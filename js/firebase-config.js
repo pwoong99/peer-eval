@@ -5,12 +5,12 @@
 // ============================================================
 
 export const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: ""
+  apiKey: "AIzaSyDEfMfz1kLopXUjEAgUtdLU97lkXKisJr4",
+  authDomain: "peer-eval-334b0.firebaseapp.com",
+  projectId: "peer-eval-334b0",
+  storageBucket: "peer-eval-334b0.firebasestorage.app",
+  messagingSenderId: "31485935497",
+  appId: "1:31485935497:web:de4fcfb6d54a4409ef6b58"
 };
 
 // 교사 계정 이메일 (Firebase 콘솔 > Authentication 에서 만든 교사 계정)
