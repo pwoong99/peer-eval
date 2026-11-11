@@ -839,6 +839,7 @@ window.__apiReady.catch(function () {});
  */
 const APP_AUTHOR = '푸르이든';
 const VERSION_HISTORY = [
+  { v: '2.02', text: '불러올 수 없는 사진(예전 드라이브 사진 등)은 깨진 그림 대신 "사진 없음"으로 표시' },
   { v: '2.01', text: '새로고침 버튼을 모두 없애고, 산출물·평가가 바뀌면 화면이 저절로 바뀌도록 변경' },
   { v: '2.00', major: true, text: 'Firebase + GitHub로 새로 옮김 (훨씬 빨라짐, 교사 이메일 로그인, 학생 명단 등록, 예전 기록 가져오기)' },
   { v: '1.95', text: '교사용 학생·모둠 상세 화면에 새로고침 버튼 추가 (받은 평가·돌아보기 최신으로 다시 불러오기)' },
@@ -1083,9 +1084,18 @@ function resetPhotoBox_(target, existingUrl) {
   }
 }
 
+// 사진을 불러오지 못하면(예: 예전 구글 드라이브 사진을 지운 경우) 깨진 그림 대신 "사진 없음"을 보여준다
+function photoMissing_(img) {
+  const box = document.createElement('div');
+  box.className = img.closest('.gb-photo') ? 'gb-nophoto' : 'none';
+  box.innerHTML = '📷<br>사진 없음';
+  const holder = img.closest('a') || img;
+  holder.replaceWith(box);
+}
+
 function renderMediaRowHtml(imageUrl, url) {
   const photoHtml = imageUrl
-    ? `<a href="${imageUrl}" target="_blank" rel="noopener"><img src="${imageUrl}" alt="산출물 사진 (새 창에서 크게 보기)"></a>`
+    ? `<a href="${imageUrl}" target="_blank" rel="noopener"><img src="${imageUrl}" alt="산출물 사진 (새 창에서 크게 보기)" onerror="photoMissing_(this)"></a>`
     : `<div class="none">사진 없음</div>`;
   const embed = getEmbedInfo_(url);
   // 영상 링크(유튜브·드라이브·비메오)는 주소를 보여주지 않고 화면 안 영상으로만 본다
@@ -2721,7 +2731,7 @@ function renderTeacherGroupTable(list, unassigned) {
     const members = (g.members || []).map(m => escapeHtml(m)).join(', ') || '(구성원 없음)';
     let photo;
     if (g.registered && g.imageUrl) {
-      photo = `<img src="${escapeHtml(g.imageUrl)}" alt="${escapeHtml(g.groupName)} 산출물 사진" loading="lazy">`;
+      photo = `<img src="${escapeHtml(g.imageUrl)}" alt="${escapeHtml(g.groupName)} 산출물 사진" loading="lazy" onerror="photoMissing_(this)">`;
     } else if (g.registered) {
       photo = '<div class="gb-nophoto">📷<br>사진 없음</div>';
     } else {
