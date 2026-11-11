@@ -423,7 +423,6 @@ window.__apiReady.catch(function () {});
       <label style="margin-bottom:6px">프로젝트 선택 <span style="color:var(--ink-faint)">(🟢 진행중 · ⚪ 종료)</span></label>
       <div style="display:flex;gap:8px;align-items:center">
         <select id="mainProjectSelect" onchange="onMainProjectChange()" style="margin-bottom:0"></select>
-        <button class="btn-plain btn-outline btn-sm" style="margin:0;white-space:nowrap" onclick="loadStudentProjects(currentProject ? currentProject.id : null)">🔄</button>
       </div>
     </div>
     <div class="proj-tag" id="mainProjSeq" style="display:none"></div>
@@ -528,7 +527,7 @@ window.__apiReady.catch(function () {});
     <button class="back" onclick="go('main')">← 뒤로</button>
     <div style="display:flex;justify-content:space-between;align-items:center">
       <h2 style="margin:0">📊 <span id="myResultsName"></span>님이 받은 평가</h2>
-      <button class="btn-plain btn-outline btn-sm" onclick="refreshMyResults()">🔄 새로고침</button>
+
     </div>
     <div class="proj-tag" id="myResultsProjTag" style="margin-top:10px"></div>
     <div class="box">
@@ -580,7 +579,7 @@ window.__apiReady.catch(function () {});
     <button class="back" onclick="go('main')">← 뒤로</button>
     <div style="display:flex;justify-content:space-between;align-items:center">
       <h2 style="margin:0">🧱 친구들의 산출물 담벼락</h2>
-      <button class="btn-plain btn-outline btn-sm" onclick="loadEvalWall(true)">🔄 새로고침</button>
+
     </div>
     <div class="proj-tag" id="evalWallProjTag" style="margin-top:10px"></div>
     <div id="evalWallArea"></div>
@@ -649,10 +648,9 @@ window.__apiReady.catch(function () {});
         <h2 style="margin:0">📋 산출물 현황</h2>
         <div>
           <button class="btn-plain btn-outline btn-sm" onclick="openReflectionsView()">🪞 돌아보기 모아보기</button>
-          <button class="btn-plain btn-outline btn-sm" onclick="loadTeacherStudentTable(true)">🔄 새로고침</button>
         </div>
       </div>
-      <div class="hint">💡 줄을 누르면 산출물과 받은 평가를 볼 수 있고, 선생님이 직접 수정하거나 대신 등록할 수 있어요.</div>
+      <div class="hint">💡 줄을 누르면 산출물과 받은 평가를 볼 수 있고, 선생님이 직접 수정하거나 대신 등록할 수 있어요. 학생들이 올리거나 평가하면 화면이 저절로 바뀌어요.</div>
       <div id="teacherOverviewArea"></div>
     </div>
 
@@ -663,7 +661,6 @@ window.__apiReady.catch(function () {});
         <div>
           <button class="btn-plain btn-danger-outline btn-sm" onclick="manageResetAllPw()">🔄 전체 비밀번호 초기화</button>
           <button class="btn-plain btn-outline btn-sm" id="pwToggleBtn" onclick="togglePwVisible()">👁 비밀번호 보기</button>
-          <button class="btn-plain btn-outline btn-sm" onclick="loadStudentManage()">🔄 새로고침</button>
         </div>
       </div>
       <div class="hint">처음 비밀번호는 63+번호(예: 1번 → 6301)예요. "초기화"를 누르면 처음 비밀번호로 돌아가고, "직접 변경"으로 원하는 숫자 4자리를 정해줄 수 있어요.</div>
@@ -774,10 +771,7 @@ window.__apiReady.catch(function () {});
     <button class="back" onclick="backToTeacherDashboard()">← 대시보드로</button>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
       <div class="proj-tag" id="tDetailProjTag"></div>
-      <div>
-        <span id="tDetailLoadedAt" style="font-size:12px;color:var(--ink-faint);margin-right:6px"></span>
-        <button class="btn-plain btn-outline btn-sm" onclick="loadTeacherDetail_()">🔄 새로고침</button>
-      </div>
+
     </div>
     <h2 style="margin-top:4px" id="teacherStudentName"></h2>
     <div id="tDetailMembers" class="hint" style="display:none"></div>
@@ -795,7 +789,7 @@ window.__apiReady.catch(function () {});
     <button class="back" onclick="backToTeacherDashboard()">← 대시보드로</button>
     <div style="display:flex;justify-content:space-between;align-items:center">
       <h2 style="margin:0">🪞 피드백 돌아보기 모아보기</h2>
-      <button class="btn-plain btn-outline btn-sm" onclick="loadReflectionsView()">🔄 새로고침</button>
+
     </div>
     <div class="proj-tag" id="reflProjTag" style="margin-top:10px"></div>
     <div class="hint">학생들이 "나의 평가 결과보기" 화면에서 친구들의 피드백을 읽고 쓴 내용이에요. 고친 점이나 다음에 적용할 점을 확인할 수 있어요.</div>
@@ -845,6 +839,7 @@ window.__apiReady.catch(function () {});
  */
 const APP_AUTHOR = '푸르이든';
 const VERSION_HISTORY = [
+  { v: '2.01', text: '새로고침 버튼을 모두 없애고, 산출물·평가가 바뀌면 화면이 저절로 바뀌도록 변경' },
   { v: '2.00', major: true, text: 'Firebase + GitHub로 새로 옮김 (훨씬 빨라짐, 교사 이메일 로그인, 학생 명단 등록, 예전 기록 가져오기)' },
   { v: '1.95', text: '교사용 학생·모둠 상세 화면에 새로고침 버튼 추가 (받은 평가·돌아보기 최신으로 다시 불러오기)' },
   { v: '1.94', text: '학생 관리 탭에 전체 비밀번호 초기화 버튼 추가' },
@@ -1232,8 +1227,8 @@ function doChangePw() {
 }
 
 /* ===================== 학생 메인: 프로젝트 선택 ===================== */
-function loadStudentProjects(preferId) {
-  setMainMsg('프로젝트 목록을 불러오는 중...', '');
+function loadStudentProjects(preferId, silent) {
+  if (!silent) setMainMsg('프로젝트 목록을 불러오는 중...', '');
   google.script.run
     .withSuccessHandler(res => {
       if (!res.success) { setMainMsg(res.message || '불러오기 실패', 'error'); return; }
@@ -1245,7 +1240,7 @@ function loadStudentProjects(preferId) {
       let pick = preferId ? studentProjects.find(p => p.id === preferId) : null;
       if (!pick) pick = studentProjects.find(p => isActiveProject_(p)) || studentProjects[0] || null;
       setCurrentProject(pick);
-      setMainMsg('', '');
+      if (!silent) setMainMsg('', '');
       if (!pick) setMainMsg('아직 만들어진 프로젝트가 없어요.', '');
     })
     .withFailureHandler(err => setMainMsg('불러오기 실패: ' + err.message, 'error'))
@@ -1361,6 +1356,67 @@ function renderMySubInfo(sub) {
   document.getElementById('infoMediaArea').innerHTML = renderMediaRowHtml(sub.imageUrl, sub.url);
 }
 
+/* ===================== 실시간 반영 =====================
+ * 누가 산출물을 올리거나 평가를 남기면 Firebase가 알려준다.
+ * 그때 지금 보고 있는 화면만 조용히 다시 그린다. (새로고침 버튼이 필요 없음)
+ * 글을 쓰고 있는 화면(평가 쓰기, 산출물 등록·수정, 돌아보기 칸)은 건드리지 않는다.
+ */
+let liveTimer = null;
+window.__apiReady.then(api => { if (api.onChange) api.onChange(() => { clearTimeout(liveTimer); liveTimer = setTimeout(liveRefresh_, 250); }); });
+
+function activeViewKey_() {
+  const v = document.querySelector('.view.active');
+  return v ? v.id.replace(/^view-/, '') : '';
+}
+
+function liveRefresh_() {
+  if (document.hidden) return;
+  switch (activeViewKey_()) {
+    case 'login': refreshInit_(); break;
+    case 'main': if (loggedInStudent) loadStudentProjects(currentProject ? currentProject.id : null, true); break;
+    case 'eval-wall': loadEvalWall(true); break;
+    case 'my-results': refreshMyResultsSilently_(); break;
+    case 'teacher-dashboard':
+      if (teacherTab === 'projects') loadTeacherStudentTable(true); else loadStudentManage();
+      break;
+    case 'teacher-student': loadTeacherDetail_(true); break;
+    case 'teacher-reflections': loadReflectionsView(true); break;
+  }
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) liveRefresh_(); });
+
+// 받은 평가만 다시 그린다 (아래 돌아보기 칸은 쓰는 중일 수 있어서 그대로 둠)
+let lastMyResultsHtml = '';
+function refreshMyResultsSilently_() {
+  if (!currentProject || !loggedInStudent) return;
+  google.script.run
+    .withSuccessHandler(result => {
+      const html = renderResultsHtml(result);
+      if (html === lastMyResultsHtml) return;
+      lastMyResultsHtml = html;
+      document.getElementById('myResultsArea').innerHTML = html;
+      if (!document.getElementById('myReflText')) renderMyReflection_(result, currentProject.id);
+    })
+    .getMyEvaluationResults(loggedInStudent, currentProject.id);
+}
+
+// 교사 상세: 산출물(영상)이 그대로면 받은 평가·돌아보기만 다시 그린다 (보던 영상이 끊기지 않게)
+function refreshTeacherDetailSilently_(d) {
+  const onOk = result => {
+    if (teacherDetail !== d) return;
+    const before = JSON.stringify((d.result && d.result.submission) || null);
+    const after = JSON.stringify(result.submission || null);
+    const hadSub = !!(d.result && d.result.hasSubmission);
+    d.result = result;
+    if (before !== after || hadSub !== !!result.hasSubmission) { renderTeacherDetail_(); return; }
+    if (result.hasSubmission) document.getElementById('teacherStudentArea').innerHTML = renderResultsHtml(result);
+    document.getElementById('tDetailReflections').innerHTML = renderReflectionListHtml_(result.reflections || [], d.type === 'group');
+  };
+  const run = google.script.run.withSuccessHandler(onOk);
+  if (d.type === 'group') run.teacherGetGroupResult(teacherPw, d.groupId, teacherSelectedProjectId);
+  else run.teacherGetStudentResult(teacherPw, d.name, teacherSelectedProjectId);
+}
+
 /* ===================== 나의 평가 결과보기 ===================== */
 function openMyResults() {
   if (!requireCurrentProject_()) return;
@@ -1376,7 +1432,8 @@ function loadMyResultsFor(projectId) {
   google.script.run
     .withSuccessHandler(result => {
       try {
-        document.getElementById('myResultsArea').innerHTML = renderResultsHtml(result);
+        lastMyResultsHtml = renderResultsHtml(result);
+        document.getElementById('myResultsArea').innerHTML = lastMyResultsHtml;
         renderMyReflection_(result, projectId);
       } catch (e) {
         document.getElementById('myResultsArea').innerHTML =
@@ -1559,10 +1616,7 @@ function openEvalWall() {
   if (isActiveProject_(currentProject)) startWallPolling();
 }
 
-function startWallPolling() {
-  stopWallPolling();
-  wallPollTimer = setInterval(() => loadEvalWall(true), 6000);
-}
+function startWallPolling() { /* 실시간 반영으로 바뀌어 주기적 새로고침은 하지 않음 */ }
 function stopWallPolling() {
   if (wallPollTimer) { clearInterval(wallPollTimer); wallPollTimer = null; }
 }
@@ -1761,12 +1815,7 @@ function backToTeacherDashboard() {
   startTeacherPolling();
 }
 
-function startTeacherPolling() {
-  stopTeacherPolling();
-  teacherPollTimer = setInterval(() => {
-    if (!document.hidden && teacherTab === 'projects') loadTeacherStudentTable(true);
-  }, 30000);
-}
+function startTeacherPolling() { /* 실시간 반영으로 바뀌어 주기적 새로고침은 하지 않음 */ }
 
 /* ---- 대시보드 탭 전환 ---- */
 function switchTeacherTab(tab) {
@@ -2715,9 +2764,10 @@ function teacherDetailLabel_() {
   return teacherDetail.type === 'group' ? teacherDetail.groupName : teacherDetail.name + ' 학생';
 }
 
-function loadTeacherDetail_() {
+function loadTeacherDetail_(silent) {
   const d = teacherDetail;
   if (!d) return;
+  if (silent) return refreshTeacherDetailSilently_(d);
   const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
   setProjTag_('tDetailProjTag', p);
   document.getElementById('teacherStudentName').textContent = teacherDetailLabel_();
@@ -2739,9 +2789,6 @@ function loadTeacherDetail_() {
     try {
       d.result = result;
       renderTeacherDetail_();
-      const now = new Date();
-      document.getElementById('tDetailLoadedAt').textContent =
-        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' 기준';
     } catch (e) {
       document.getElementById('teacherStudentSubmissionArea').innerHTML =
         '<div class="msg error">화면 표시 중 오류: ' + escapeHtml(e.message) + '</div>';
@@ -2802,9 +2849,9 @@ function openReflectionsView() {
   loadReflectionsView();
 }
 
-function loadReflectionsView() {
+function loadReflectionsView(silent) {
   const area = document.getElementById('reflListArea');
-  area.innerHTML = '<div class="loading">불러오는 중...</div>';
+  if (!silent || !area.innerHTML.trim()) area.innerHTML = '<div class="loading">불러오는 중...</div>';
   const pid = teacherSelectedProjectId;
   google.script.run
     .withSuccessHandler(res => {

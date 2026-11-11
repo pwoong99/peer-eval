@@ -44,8 +44,11 @@ export function createApi(store, opts = {}) {
     projects: [],        // 프로젝트 문서들
     baseReady: null,
     per: new Map(),      // pid -> { subs: Map, evals: Map, refl: Map, ready: Promise, unsubs: [] }
-    lru: []
+    lru: [],
+    watchers: []         // 데이터가 바뀌면 화면에 알려줄 함수들
   };
+  // 누가 산출물을 올리거나 평가를 남기면 화면이 저절로 다시 그려지도록 알려준다
+  function notify(kind, pid) { C.watchers.forEach(f => { try { f(kind, pid || null); } catch (e) { console.error(e); } }); }
 
   function startBase() {
     if (C.baseReady) return C.baseReady;
@@ -56,11 +59,11 @@ export function createApi(store, opts = {}) {
     store.listen('students', [], docs => {
       C.students = docs.map(d => ({ id: d.id, num: Number(d.num), name: String(d.name) }))
         .sort((a, b) => a.num - b.num);
-      r1();
+      r1(); notify('students');
     }, fail(r1));
     store.listen('projects', [], docs => {
       C.projects = docs.map(d => Object.assign({}, d));
-      r2();
+      r2(); notify('projects');
     }, fail(r2));
     C.baseReady = Promise.all([p1, p2]);
     return C.baseReady;
@@ -75,7 +78,7 @@ export function createApi(store, opts = {}) {
         let first = true;
         const un = store.listen(col, [['projectId', '==', pid]], docs => {
           const m = new Map(); docs.forEach(d => m.set(d.id, d)); e[key] = m;
-          if (first) { first = false; res(); }
+          if (first) { first = false; res(); } else notify(key, pid);
         }, err => {
           // 권한이 바뀌면(로그아웃 등) 구독이 끊긴다 → 다음에 다시 구독하도록 캐시에서 뺀다
           console.warn('구독 끊김:', col, err && err.code);
@@ -97,7 +100,7 @@ export function createApi(store, opts = {}) {
     return e.ready.then(() => e);
   }
   // 내가 방금 쓴 내용은 구독 알림을 기다리지 않고 캐시에 바로 반영 (화면이 바로 바뀌도록)
-  function cachePut(pid, key, id, data) { const e = C.per.get(pid); if (e) { if (data) e[key].set(id, Object.assign({ id }, data)); else e[key].delete(id); } }
+  function cachePut(pid, key, id, data) { const e = C.per.get(pid); if (e) { if (data) e[key].set(id, Object.assign({ id }, data)); else e[key].delete(id); notify(key, pid); } }
 
   // ---------------- 도우미 ----------------
   const studentNames = () => C.students.map(s => s.name);
@@ -968,6 +971,9 @@ export function createApi(store, opts = {}) {
     await store.batch(ops, n => say('저장하는 중... ' + n + ' / ' + ops.length));
     return { success: true, students: students.length, projects: projects.length, submissions: subCount, evaluations: evCount, reflections: rfCount };
   };
+
+  // 화면이 "데이터 바뀜" 알림을 받는 곳
+  api.onChange = fn => { C.watchers.push(fn); return () => { C.watchers = C.watchers.filter(f => f !== fn); }; };
 
   // 화면 쪽에서 쓰는 보조 값
   api.__cache = C;
