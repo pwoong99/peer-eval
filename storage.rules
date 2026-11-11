@@ -1,0 +1,35 @@
+rules_version = '2';
+
+// ============================================================
+//  산출물 동료평가 — Storage(사진) 보안 규칙
+//  ※ teacher 이메일을 firestore.rules 와 똑같이 맞춘 뒤,
+//    Firebase 콘솔 > Storage > 규칙 에 붙여 넣고 [게시]
+//    (게시할 때 "Firestore 접근 권한 부여" 창이 나오면 허용)
+// ============================================================
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isTeacher() {
+      return request.auth != null && request.auth.token.email == 'pwoong99@naver.com';
+    }
+    function sessionDoc() {
+      return /databases/(default)/documents/sessions/$(request.auth.uid);
+    }
+    function mySid() { return firestore.get(sessionDoc()).data.sid; }
+    function ownsKey(pid, ownerKey) {
+      return request.auth != null && firestore.exists(sessionDoc()) && (
+        mySid() == ownerKey ||
+        firestore.get(/databases/(default)/documents/projects/$(pid)).data
+          .get('groupOf', {}).get(mySid(), '') == ownerKey);
+    }
+
+    // 산출물 사진: photos/프로젝트ID/주인키/파일이름
+    match /photos/{pid}/{ownerKey}/{file} {
+      allow read: if true;
+      allow create, update: if (isTeacher() || ownsKey(pid, ownerKey))
+        && request.resource.size < 5 * 1024 * 1024
+        && request.resource.contentType.matches('image/.*');
+      allow delete: if isTeacher() || ownsKey(pid, ownerKey);
+    }
+  }
+}

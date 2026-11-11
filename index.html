@@ -1,0 +1,2902 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>산출물 동료평가</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --paper: #FAF8F3;
+      --card: #FFFFFF;
+      --ink: #2B2A28;
+      --ink-soft: #6E6A5E;
+      --ink-faint: #A29C8B;
+      --border: #E7E1D3;
+      --border-strong: #D8D0BC;
+      --navy: #33415C;
+      --navy-deep: #26314A;
+      --terracotta: #C1573D;
+      --terracotta-deep: #A5462F;
+      --sage: #7C9473;
+      --danger: #B23A2E;
+      --danger-bg: #F8E9E5;
+      --success-bg: #EBF1E7;
+      --success-ink: #4C6B47;
+      --radius: 12px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+      background: var(--paper);
+      margin: 0;
+      padding: 20px 20px 56px;
+      color: var(--ink);
+    }
+    #app { max-width: 720px; margin: 0 auto; transition: max-width 0.15s; }
+    #app.app-wide { max-width: 890px; }
+    .view { display: none; }
+    .view.active { display: block; }
+
+    h1, h2 { font-family: 'Gowun Batang', serif; font-weight: 700; color: var(--ink); }
+    h1 { text-align: center; font-size: 25px; margin-bottom: 6px; letter-spacing: -0.2px; }
+    h2 { font-size: 19px; margin: 10px 0 16px; }
+    .sub { text-align: center; color: var(--ink-soft); margin-bottom: 24px; font-size: 14px; }
+
+    .big-btn {
+      display: block; width: 100%; padding: 16px; margin: 10px 0;
+      font-size: 16px; font-weight: 700; border: none; border-radius: var(--radius);
+      cursor: pointer; color: #fff; background: var(--navy);
+    }
+    .btn-primary { background: var(--navy); color: #fff; }
+    .btn-primary:hover { background: var(--navy-deep); }
+    .btn-secondary { background: var(--terracotta); color: #fff; }
+    .btn-secondary:hover { background: var(--terracotta-deep); }
+    .btn-plain {
+      display: inline-block; padding: 10px 16px; border-radius: 9px; border: none;
+      background: var(--navy); color: #fff; cursor: pointer; font-size: 14px; margin: 4px 4px 4px 0;
+      font-family: inherit;
+    }
+    .btn-plain:hover { background: var(--navy-deep); }
+    .btn-danger { background: var(--danger); }
+    .btn-danger:hover { background: #942F25; }
+    .btn-gray { background: #8C8677; }
+    .btn-gray:hover { background: #726D60; }
+    .btn-outline { background: transparent; color: var(--navy); border: 1.5px solid var(--navy); }
+    .btn-outline:hover { background: #EFEEE8; }
+    .btn-danger-outline { background: transparent; color: var(--danger); border: 1.5px solid var(--danger); }
+    .btn-danger-outline:hover { background: var(--danger-bg); }
+    .btn-sm { padding: 5px 10px; font-size: 12px; }
+
+    .back { background: none; border: none; color: var(--ink-soft); font-size: 14px; cursor: pointer; padding: 6px 0 16px; font-family: inherit; }
+    .back:hover { color: var(--navy); }
+
+    select, input[type=text], input[type=url], input[type=password], textarea {
+      width: 100%; padding: 11px 12px; font-size: 15px; border: 1px solid var(--border-strong);
+      border-radius: 9px; margin-bottom: 12px; font-family: inherit; background: #fff; color: var(--ink);
+    }
+    select:focus, input:focus, textarea:focus { outline: none; border-color: var(--navy); }
+    textarea { min-height: 80px; resize: vertical; }
+    textarea:disabled { background: #F3F0E7; color: var(--ink-soft); }
+    label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 13px; color: var(--ink-soft); }
+
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px 16px; margin-bottom: 10px; cursor: pointer; position: relative;
+    }
+    .card:hover { background: #F5F2EA; }
+    .card .name { font-weight: 700; font-size: 14px; color: var(--navy); }
+    .card .title { font-size: 16px; font-weight: 700; margin: 4px 0; }
+    .card .desc { font-size: 13px; color: var(--ink-soft); }
+    .badge {
+      position: absolute; top: 14px; right: 14px; font-size: 11px; padding: 3px 9px;
+      border-radius: 20px; background: var(--success-bg); color: var(--success-ink); font-weight: 700;
+    }
+    .badge.todo { background: #F5EBDD; color: #8A5A2A; }
+
+    .box {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px; margin-bottom: 16px;
+    }
+
+    .star-row { display: flex; gap: 6px; margin: 6px 0 16px; }
+    .star { font-size: 28px; cursor: pointer; color: #DCD6C6; user-select: none; }
+    .star.on { color: var(--terracotta); }
+    .star-row.readonly .star { cursor: default; }
+
+    .qlabel { font-weight: 700; margin: 14px 0 4px; font-size: 14px; color: var(--ink); }
+
+    .hint {
+      background: #F3F0E7; border-left: 3px solid var(--navy); border-radius: 8px;
+      padding: 10px 14px; font-size: 13px; color: var(--ink-soft); margin: 10px 0 16px;
+    }
+
+    .msg { font-size: 14px; margin: 8px 0; padding: 10px 12px; border-radius: 8px; }
+    .msg.error { background: var(--danger-bg); color: var(--danger); }
+    .msg.success { background: var(--success-bg); color: var(--success-ink); }
+
+    .avg-row { display: flex; align-items: center; margin: 10px 0; gap: 10px; }
+    .avg-label { width: 200px; font-size: 13px; color: var(--ink-soft); }
+    .avg-bar-bg { flex: 1; background: #EDE8DA; border-radius: 8px; height: 12px; overflow: hidden; }
+    .avg-bar-fill { background: var(--navy); height: 100%; }
+    .avg-num { width: 36px; text-align: right; font-weight: 700; font-size: 13px; }
+
+    .overall { text-align: center; margin: 10px 0 22px; }
+    .overall .num { font-family: 'Gowun Batang', serif; font-size: 44px; font-weight: 700; color: var(--terracotta); }
+    .overall .stars { font-size: 20px; color: var(--terracotta); }
+
+    .postit-wrap { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 10px; }
+    .postit {
+      width: 150px; min-height: 130px; padding: 14px; border-radius: 2px;
+      font-size: 13px; line-height: 1.5; box-shadow: 2px 3px 6px rgba(43,42,40,0.12);
+      transform: rotate(var(--r)); color: var(--ink);
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .postit .from { font-weight: 700; font-size: 12px; margin-top: 8px; text-align: right; }
+
+    table.tt { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
+    table.tt th, table.tt td { border: 1px solid var(--border); padding: 6px 8px; text-align: left; }
+    table.tt th { background: #F3F0E7; font-weight: 700; color: var(--ink-soft); text-align: center; }
+    table.tt tr:hover td { background: #FAF8F3; cursor: pointer; }
+    table.tt td .btn-plain { white-space: nowrap; }
+    table.tt td.tt-num, table.tt td.tt-name, table.tt td.tt-status, table.tt td.tt-count, table.tt td.tt-actions {
+      text-align: center;
+    }
+    .tt-num { width: 44px; }
+    .tt-name { width: 70px; }
+    .tt-status { width: 74px; }
+    .tt-title { width: 336px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .tt-count { width: 58px; }
+    .tt-score { width: 74px; text-align: center; }
+    table.tt td.tt-score { text-align: center; }
+    .score-num { font-weight: 700; color: var(--terracotta-deep); font-size: 14px; }
+    .score-num.low { color: var(--ink-soft); }
+    .score-stars { font-size: 10px; color: var(--terracotta); letter-spacing: -1px; line-height: 1.1; }
+    .tt-actions { width: 130px; }
+
+    .link-a { color: var(--navy); word-break: break-all; text-decoration: underline; text-underline-offset: 2px; }
+    .login-topbar { display: flex; justify-content: flex-end; margin-bottom: 4px; }
+    .teacher-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 13px; color: var(--ink-soft); cursor: pointer; font-family: inherit;
+      background: var(--card); border: 1px solid var(--border-strong); border-radius: 20px;
+      padding: 6px 13px;
+    }
+    .teacher-link:hover { color: var(--navy); border-color: var(--navy); }
+    .loading { text-align: center; padding: 30px; color: var(--ink-faint); }
+
+    /* ===== 로그인 화면 ===== */
+    .login-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .topbar .who { font-weight: 700; color: var(--navy); }
+    .topbar .links { font-size: 13px; }
+    .topbar .links span { color: var(--ink-faint); cursor: pointer; margin-left: 10px; }
+    .topbar .links span:hover { color: var(--navy); }
+
+    /* ===== 메인 메뉴 ===== */
+    .menu-list { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin: 20px 0; }
+    .menu-row {
+      display: flex; align-items: center; gap: 14px; padding: 18px 18px;
+      cursor: pointer; border-bottom: 1px solid var(--border); transition: background 0.12s;
+    }
+    .menu-row:last-child { border-bottom: none; }
+    .menu-row:hover { background: #F5F2EA; }
+    .menu-row .icon {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center; font-size: 19px;
+      background: #EFEBDC;
+    }
+    .menu-row .text { flex: 1; }
+    .menu-row .label { font-weight: 700; font-size: 15px; color: var(--ink); }
+    .menu-row .desc { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+    .menu-row .chev { color: var(--ink-faint); font-size: 18px; }
+
+    /* ===== 담벼락(동료평가) 그리드 ===== */
+    .wall { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; margin-top: 10px; }
+    .wall-tile {
+      aspect-ratio: 1 / 1; border-radius: 3px; padding: 12px; cursor: pointer;
+      box-shadow: 2px 3px 7px rgba(43,42,40,0.14); position: relative;
+      display: flex; flex-direction: column; justify-content: center; align-items: center;
+      text-align: center; transform: rotate(var(--r)); color: var(--ink);
+      transition: transform 0.15s;
+    }
+    .wall-tile:hover { transform: rotate(var(--r)) scale(1.04); }
+    .wall-tile .wt-name { font-weight: 700; font-size: 14px; margin-bottom: 6px; }
+    .wall-tile .wt-title { font-size: 12px; color: var(--ink-soft); line-height: 1.3; }
+    .wall-tile .wt-badge { position: absolute; top: -8px; right: -6px; font-size: 16px; }
+    .wall-empty { text-align: center; color: var(--ink-faint); padding: 30px 0; }
+
+    /* ===== 프로젝트 관리 ===== */
+    .proj-tag {
+      display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 20px;
+      background: #EAEFF3; color: var(--navy); font-weight: 700; margin-bottom: 6px;
+    }
+    .proj-tag.ended { background: #EEEBE3; color: var(--ink-soft); }
+    /* ===== 모둠 배정 보드 (드래그앤드롭) ===== */
+    .gboard-wrap { margin-top: 8px; }
+    .gpool {
+      background: #F3F0E7; border: 1.5px dashed var(--border-strong); border-radius: 10px;
+      padding: 10px 12px; min-height: 64px; margin-bottom: 12px;
+    }
+    .gpool-title { font-size: 13px; color: var(--ink-soft); margin-bottom: 8px; }
+    .ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 10px; margin-bottom: 10px; }
+    .gcol {
+      background: #fff; border: 1px solid var(--border); border-radius: 10px;
+      padding: 10px; min-height: 120px;
+    }
+    .drop-zone.over { outline: 2px solid var(--navy); outline-offset: -2px; background: #EEF1F5; }
+    .gcol-head { display: flex; gap: 6px; align-items: center; margin-bottom: 8px; }
+    .gcol-head input { margin: 0; padding: 6px 8px; font-size: 14px; font-weight: 700; min-width: 0; }
+    .gcount {
+      font-size: 11px; padding: 2px 8px; border-radius: 20px; white-space: nowrap;
+      background: var(--success-bg); color: var(--success-ink); font-weight: 700;
+    }
+    .gcount.warn { background: var(--danger-bg); color: var(--danger); }
+    .gdel { background: none; border: none; color: var(--ink-faint); cursor: pointer; font-size: 15px; padding: 2px 4px; }
+    .gdel:hover { color: var(--danger); }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 5px 11px; border-radius: 16px; background: #EAEFF3; color: var(--navy);
+      font-size: 13px; cursor: grab; user-select: none; border: 1.5px solid transparent;
+    }
+    .gpool .chip { background: #fff; border-color: var(--border); }
+    .chip.selected { border-color: var(--terracotta); background: #F6E4DC; color: var(--terracotta-deep); }
+    .chip.dragging { opacity: 0.4; }
+    .gempty { font-size: 12px; color: var(--ink-faint); }
+
+    /* ===== 교사 대시보드 탭 ===== */
+    .tabs { display: flex; gap: 4px; border-bottom: 1.5px solid var(--border-strong); margin: 4px 0 16px; }
+    .tab-btn {
+      background: none; border: none; padding: 10px 16px; font-size: 15px; font-weight: 700;
+      color: var(--ink-faint); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1.5px;
+      font-family: inherit;
+    }
+    .tab-btn:hover { color: var(--ink-soft); }
+    .tab-btn.active { color: var(--navy); border-bottom-color: var(--navy); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    table.tt tr.clickable td { cursor: pointer; }
+    table.tt tr.clickable:hover td { background: #F5F2EA; }
+    .pw-cell { font-family: ui-monospace, Menlo, Consolas, monospace; letter-spacing: 1px; }
+    .pw-note { font-size: 11px; color: var(--ink-faint); }
+    .pw-note.changed { color: var(--terracotta-deep); }
+
+    /* ===== 영상·슬라이드 바로보기 ===== */
+    .embed-wrap { margin-top: 12px; }
+    .embed-frame-box { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #1f1f1f; border-radius: 10px; overflow: hidden; }
+    .embed-frame-box.doc { aspect-ratio: auto; height: 520px; background: #fff; border: 1px solid var(--border); }
+    .embed-frame-box iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .embed-note { font-size: 11px; color: var(--ink-faint); margin-top: 4px; }
+
+    /* ===== 코멘트 문장틀 버튼 ===== */
+    .frame-btns { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+    .frame-btn {
+      border: 1px solid var(--border-strong); background: #fff; color: var(--ink-soft);
+      border-radius: 16px; padding: 5px 11px; font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .frame-btn:hover { border-color: var(--navy); color: var(--navy); background: #EEF1F5; }
+
+    /* ===== 피드백 돌아보기 ===== */
+    .refl-box { border-left: 4px solid var(--sage); }
+    .refl-box h3 { font-family: 'Gowun Batang', serif; font-size: 16px; margin: 0 0 6px; }
+    .refl-guide { font-size: 13px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 8px; }
+    .refl-count { font-size: 11px; color: var(--ink-faint); text-align: right; margin-top: -8px; margin-bottom: 8px; }
+    .refl-item { padding: 10px 0; border-bottom: 1px dashed var(--border); }
+    .refl-item:last-child { border-bottom: none; }
+    .refl-item .who { font-weight: 700; font-size: 13px; color: var(--navy); }
+    .refl-item .when { font-size: 11px; color: var(--ink-faint); margin-left: 6px; font-weight: 400; }
+    .refl-item .txt { font-size: 14px; line-height: 1.6; white-space: pre-wrap; margin-top: 4px; }
+    table.tt td.refl-cell { white-space: pre-wrap; line-height: 1.5; font-size: 13px; }
+
+    /* ===== 모둠 산출물 보드 (교사 대시보드) ===== */
+    .gb-summary { font-size: 13px; color: var(--ink-soft); margin: 4px 0 10px; }
+    .gboard { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+    .gb-card {
+      background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);
+      overflow: hidden; cursor: pointer; display: flex; flex-direction: column;
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .gb-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(43, 42, 40, 0.12); }
+    .gb-card.todo { border-style: dashed; border-color: var(--border-strong); background: #FBFAF6; }
+    .gb-photo { position: relative; aspect-ratio: 4 / 3; background: #F3F0E7; }
+    .gb-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .gb-nophoto {
+      width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      color: var(--ink-faint); font-size: 13px; text-align: center; line-height: 1.6;
+    }
+    .gb-nophoto span { font-size: 11px; color: var(--terracotta-deep); }
+    .gb-name {
+      position: absolute; left: 8px; top: 8px; background: rgba(38, 49, 74, 0.88); color: #fff;
+      font-size: 13px; font-weight: 700; padding: 3px 10px; border-radius: 14px;
+    }
+    .gb-body { padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+    .gb-title { font-weight: 700; font-size: 15px; line-height: 1.35; }
+    .gb-members { font-size: 12px; color: var(--ink-soft); line-height: 1.4; }
+    .gb-foot { margin-top: auto; padding-top: 6px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--ink-faint); }
+    .gb-score { font-weight: 700; color: var(--terracotta-deep); font-size: 14px; }
+    .gb-score.low { color: var(--ink-soft); }
+    .gb-score.none { color: var(--ink-faint); font-weight: 400; }
+
+    .qfield-row { display: flex; gap: 6px; margin-bottom: 8px; }
+    .qfield-row input { margin-bottom: 0; }
+
+    /* ===== 산출물 사진 ===== */
+    .photo-box {
+      aspect-ratio: 1 / 1; border-radius: 9px; border: 1.5px dashed var(--border-strong);
+      background: #F3F0E7; cursor: pointer; overflow: hidden; margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .photo-box:hover { background: #EDE9DA; }
+    .photo-box img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-placeholder { color: var(--ink-faint); font-size: 12px; text-align: center; line-height: 1.6; }
+    .media-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 10px; }
+    .media-row .photo-slot { flex: 1; min-width: 120px; max-width: 220px; }
+    .media-row .photo-slot img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 9px; border: 1px solid var(--border); display: block; cursor: pointer; }
+    .media-row .photo-slot .none { width: 100%; aspect-ratio: 1/1; border-radius: 9px; border: 1px dashed var(--border-strong); background: #F3F0E7; display: flex; align-items: center; justify-content: center; color: var(--ink-faint); font-size: 12px; text-align: center; }
+    .media-row .url-slot { flex: 2; min-width: 160px; display: flex; align-items: center; }
+    /* ===== 오른쪽 아래 버전 표시 ===== */
+    .version-badge {
+      position: fixed; right: 12px; bottom: 10px; z-index: 50;
+      font-size: 11px; color: var(--ink-faint); background: rgba(250, 248, 243, 0.92);
+      padding: 4px 9px; border-radius: 12px; border: 1px solid var(--border);
+      cursor: pointer; user-select: none;
+    }
+    .version-badge:hover { color: var(--ink-soft); }
+    .version-panel {
+      position: fixed; right: 12px; bottom: 42px; z-index: 51; display: none;
+      width: min(340px, calc(100vw - 24px)); max-height: 60vh; overflow-y: auto;
+      background: var(--card); border: 1px solid var(--border-strong); border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(43, 42, 40, 0.15); padding: 14px 16px; font-size: 13px;
+    }
+    .version-panel.open { display: block; }
+    .version-panel h3 { font-family: 'Gowun Batang', serif; font-size: 15px; margin: 0 0 10px; }
+    .version-panel .vrow { display: flex; gap: 10px; padding: 5px 0; border-bottom: 1px dashed var(--border); }
+    .version-panel .vrow:last-child { border-bottom: none; }
+    .version-panel .vnum { flex-shrink: 0; width: 46px; font-weight: 700; color: var(--navy); }
+    .version-panel .vnum.major { color: var(--terracotta-deep); }
+    .version-panel .vtext { color: var(--ink-soft); line-height: 1.45; }
+  </style>
+</head>
+<body>
+<script>
+/* ===================== Firebase 연결 다리 =====================
+ * 화면 코드는 예전(앱스 스크립트)처럼 google.script.run.함수(...)로 부른다.
+ * 여기서 그 호출을 js/api.js 의 같은 이름 함수로 넘겨준다.
+ */
+window.__apiReady = new Promise(function (res, rej) { window.__resolveApi = res; window.__rejectApi = rej; });
+window.__apiReady.catch(function () {});
+(function () {
+  function runner(ok, fail) {
+    return new Proxy({}, {
+      get: function (_, name) {
+        if (name === 'withSuccessHandler') return function (f) { return runner(f, fail); };
+        if (name === 'withFailureHandler') return function (f) { return runner(ok, f); };
+        return function () {
+          var args = Array.prototype.slice.call(arguments);
+          window.__apiReady
+            .then(function (api) {
+              if (typeof api[name] !== 'function') throw new Error('없는 기능이에요: ' + String(name));
+              return api[name].apply(null, args);
+            })
+            .then(function (r) { if (ok) ok(r); })
+            .catch(function (e) {
+              console.error(name, e);
+              if (fail) fail(e instanceof Error ? e : new Error(String(e)));
+            });
+        };
+      }
+    });
+  }
+  window.google = { script: { get run() { return runner(null, null); } } };
+})();
+</script>
+<script type="module" src="js/main.js"></script>
+<div id="app">
+
+  <!-- ===== 1번째 화면: 로그인 ===== -->
+  <div id="view-login" class="view active">
+    <div class="login-topbar">
+      <button type="button" class="teacher-link" onclick="go('teacher-login')">👩‍🏫 교사용</button>
+    </div>
+    <h1 id="appTitle">산출물 동료평가</h1>
+    <div class="sub" id="appSub"></div>
+    <div class="login-box">
+      <h2 style="margin-top:0">👋 학생 로그인</h2>
+      <label>내 이름</label>
+      <select id="loginNameSelect"></select>
+      <label>비밀번호 (숫자 4자리)</label>
+      <input type="password" id="loginPwInput" maxlength="4" inputmode="numeric" placeholder="예: 6310">
+      <button class="big-btn btn-primary" onclick="doStudentLogin()">로그인</button>
+      <div id="loginMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 2번째 화면: 메인 (로그인 후) ===== -->
+  <div id="view-main" class="view">
+    <div class="topbar">
+      <div class="who" id="mainUserName"></div>
+      <div class="links"><span onclick="openChangePw()">비밀번호 변경</span><span onclick="logout()">로그아웃</span></div>
+    </div>
+    <div class="box" style="padding:14px 18px;">
+      <label style="margin-bottom:6px">프로젝트 선택 <span style="color:var(--ink-faint)">(🟢 진행중 · ⚪ 종료)</span></label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <select id="mainProjectSelect" onchange="onMainProjectChange()" style="margin-bottom:0"></select>
+        <button class="btn-plain btn-outline btn-sm" style="margin:0;white-space:nowrap" onclick="loadStudentProjects(currentProject ? currentProject.id : null)">🔄</button>
+      </div>
+    </div>
+    <div class="proj-tag" id="mainProjSeq" style="display:none"></div>
+    <h1 style="font-size:21px;text-align:left;margin-top:2px" id="mainTitle"></h1>
+    <div style="color:var(--ink-soft);font-size:14px" id="mainProjDesc"></div>
+    <div id="mainProjNotice"></div>
+    <div class="menu-list">
+      <div class="menu-row" onclick="openMySub()">
+        <div class="icon">📁</div>
+        <div class="text">
+          <div class="label" id="menuMySubLabel">나의 산출물 등록</div>
+          <div class="desc" id="menuMySubDesc">내가 만든 산출물을 등록하거나 확인해요</div>
+        </div>
+        <div class="chev">›</div>
+      </div>
+      <div class="menu-row" onclick="openEvalWall()">
+        <div class="icon">⭐</div>
+        <div class="text">
+          <div class="label" id="menuEvalLabel">동료 평가하기</div>
+          <div class="desc" id="menuEvalDesc">친구들의 산출물에 별점과 코멘트를 남겨요</div>
+        </div>
+        <div class="chev">›</div>
+      </div>
+      <div class="menu-row" onclick="openMyResults()">
+        <div class="icon">📊</div>
+        <div class="text">
+          <div class="label">나의 평가 결과보기</div>
+          <div class="desc">친구들이 남긴 평가와 코멘트를 확인해요</div>
+        </div>
+        <div class="chev">›</div>
+      </div>
+    </div>
+    <div id="mainMsg"></div>
+  </div>
+
+  <!-- ===== 비밀번호 변경 ===== -->
+  <div id="view-change-pw" class="view">
+    <button class="back" onclick="go('main')">← 뒤로</button>
+    <h2>🔑 비밀번호 변경</h2>
+    <div class="box">
+      <label>현재 비밀번호</label>
+      <input type="password" id="curPwInput" maxlength="4" inputmode="numeric">
+      <label>새 비밀번호 (숫자 4자리)</label>
+      <input type="password" id="newPwInput" maxlength="4" inputmode="numeric">
+      <label>새 비밀번호 확인</label>
+      <input type="password" id="newPwInput2" maxlength="4" inputmode="numeric">
+      <button class="btn-plain" onclick="doChangePw()">변경하기</button>
+      <div id="changePwMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 나의 산출물: 등록 폼 ===== -->
+  <div id="view-mysub-register" class="view">
+    <button class="back" onclick="go('main')">← 뒤로</button>
+    <h2>📁 산출물을 등록해요</h2>
+    <div class="proj-tag" id="regWhoTag"></div>
+    <div id="regGroupMembers" class="hint" style="display:none"></div>
+    <div class="box">
+      <label>제목</label>
+      <input type="text" id="regTitle" placeholder="예: 랜덤 응원 명언 뽑기">
+      <label>소개</label>
+      <textarea id="regDesc" placeholder="어떤 프로그램인지, 어떤 프롬프트를 사용했는지 간단히 소개해주세요."></textarea>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+        <div style="flex:1;min-width:130px;max-width:220px;">
+          <label>산출물 사진</label>
+          <div class="photo-box" id="regPhotoBox" onclick="document.getElementById('regPhotoInput').click()">
+            <span class="photo-placeholder" id="regPhotoPlaceholder">📷<br>눌러서 사진 선택</span>
+            <img id="regPhotoPreview" style="display:none">
+          </div>
+          <input type="file" id="regPhotoInput" accept="image/*" style="display:none" onchange="onPhotoSelected(this,'reg')">
+        </div>
+        <div style="flex:2;min-width:180px;">
+          <label>URL (게시한 링크)</label>
+          <input type="url" id="regUrl" placeholder="https://...">
+        </div>
+      </div>
+      <button class="btn-plain" onclick="doRegister()">등록하기</button>
+      <div id="regMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 나의 산출물: 정보 ===== -->
+  <div id="view-mysub-info" class="view">
+    <button class="back" onclick="go('main')">← 뒤로</button>
+    <h2>📁 나의 산출물</h2>
+    <div class="proj-tag" id="infoWhoTag"></div>
+    <div id="infoGroupMembers" class="hint" style="display:none"></div>
+    <div id="infoEndedNotice"></div>
+    <div class="box">
+      <div style="font-size:18px;font-weight:bold" id="infoTitle"></div>
+      <div style="color:var(--ink-soft);margin:6px 0" id="infoDesc"></div>
+      <div id="infoMediaArea"></div>
+      <div style="margin-top:10px;" id="infoActions">
+        <button class="btn-plain btn-outline" onclick="openEditForm()">✏️ 수정하기</button>
+        <button class="btn-plain btn-danger" onclick="openDeleteForm()">🗑 삭제하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 나의 평가 결과보기 ===== -->
+  <div id="view-my-results" class="view">
+    <button class="back" onclick="go('main')">← 뒤로</button>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">📊 <span id="myResultsName"></span>님이 받은 평가</h2>
+      <button class="btn-plain btn-outline btn-sm" onclick="refreshMyResults()">🔄 새로고침</button>
+    </div>
+    <div class="proj-tag" id="myResultsProjTag" style="margin-top:10px"></div>
+    <div class="box">
+      <div id="myResultsArea"></div>
+    </div>
+    <div id="myReflectionArea"></div>
+  </div>
+
+  <!-- ===== 수정 폼 ===== -->
+  <div id="view-mysub-edit" class="view">
+    <button class="back" onclick="go('mysub-info')">← 뒤로</button>
+    <h2>산출물 수정하기</h2>
+    <div class="box">
+      <label>제목</label>
+      <input type="text" id="editTitle">
+      <label>소개</label>
+      <textarea id="editDesc"></textarea>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+        <div style="flex:1;min-width:130px;max-width:220px;">
+          <label>산출물 사진</label>
+          <div class="photo-box" id="editPhotoBox" onclick="document.getElementById('editPhotoInput').click()">
+            <span class="photo-placeholder" id="editPhotoPlaceholder">📷<br>눌러서 사진 선택</span>
+            <img id="editPhotoPreview" style="display:none">
+          </div>
+          <input type="file" id="editPhotoInput" accept="image/*" style="display:none" onchange="onPhotoSelected(this,'edit')">
+        </div>
+        <div style="flex:2;min-width:180px;">
+          <label>URL</label>
+          <input type="url" id="editUrl">
+        </div>
+      </div>
+      <button class="btn-plain" onclick="doUpdate()">저장하기</button>
+      <div id="editMsg"></div>
+    </div>
+  </div>
+
+  <div id="view-mysub-delete" class="view">
+    <button class="back" onclick="go('mysub-info')">← 뒤로</button>
+    <h2>산출물 삭제하기</h2>
+    <div class="box">
+      <div class="msg error">삭제하면 등록된 산출물과 받은 평가가 모두 사라지며 되돌릴 수 없습니다.</div>
+      <button class="btn-plain btn-danger" onclick="doDelete()">정말 삭제합니다</button>
+      <div id="delMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 동료 평가: 담벼락 ===== -->
+  <div id="view-eval-wall" class="view">
+    <button class="back" onclick="go('main')">← 뒤로</button>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">🧱 친구들의 산출물 담벼락</h2>
+      <button class="btn-plain btn-outline btn-sm" onclick="loadEvalWall(true)">🔄 새로고침</button>
+    </div>
+    <div class="proj-tag" id="evalWallProjTag" style="margin-top:10px"></div>
+    <div id="evalWallArea"></div>
+  </div>
+
+  <!-- ===== 동료 평가: 평가 폼 ===== -->
+  <div id="view-eval-form" class="view">
+    <button class="back" onclick="go('eval-wall')">← 담벼락으로</button>
+    <div class="box">
+      <div class="name" style="color:var(--navy);font-weight:bold" id="evalFormOwner"></div>
+      <div style="font-size:19px;font-weight:bold;margin:4px 0" id="evalFormTitle"></div>
+      <div style="color:var(--ink-soft);margin-bottom:8px" id="evalFormDesc"></div>
+      <div id="evalFormMediaArea"></div>
+    </div>
+    <div id="evalReadonlyNotice"></div>
+    <div class="box" id="evalInputBox">
+      <div id="evalQuestions"></div>
+      <div class="qlabel" id="evalCommentLabel">💬 코멘트 (필수)</div>
+      <div class="hint" id="evalCommentHint">
+        💬 아래 버튼을 누르면 문장이 시작돼요. <b>좋았던 점</b>은 꼭 하나 쓰고, 나머지는 하고 싶은 말을 골라 이어서 써보세요.
+        "잘했어요"보다 <b>어느 부분이 왜</b> 좋았는지 구체적으로 쓰면 친구에게 더 도움이 돼요.
+      </div>
+      <div class="frame-btns" id="frameBtns">
+        <button type="button" class="frame-btn" onclick="insertFrame('good')">👍 좋았던 점</button>
+        <button type="button" class="frame-btn" onclick="insertFrame('idea')">💡 제안</button>
+        <button type="button" class="frame-btn" onclick="insertFrame('ask')">❓ 궁금한 점</button>
+        <button type="button" class="frame-btn" onclick="insertFrame('learn')">📚 배운 점</button>
+      </div>
+      <textarea id="evalComment" placeholder="친구에게 힘이 되는 칭찬의 말을 남겨주세요. (필수)"></textarea>
+      <button class="btn-plain" id="evalSubmitBtn" onclick="doSubmitEvaluation()">평가 제출하기</button>
+      <div id="evalFormMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 교사 로그인 ===== -->
+  <div id="view-teacher-login" class="view">
+    <button class="back" onclick="go('login')">← 처음으로</button>
+    <h2>교사용 대시보드</h2>
+    <div class="box">
+      <label>교사 이메일</label>
+      <input type="text" id="teacherEmailInput" inputmode="email" autocomplete="username" placeholder="교사 계정 이메일">
+      <label>비밀번호</label>
+      <input type="password" id="teacherPwInput" autocomplete="current-password" onkeydown="if(event.key==='Enter')doTeacherLogin()">
+      <button class="btn-plain" onclick="doTeacherLogin()">입장하기</button>
+      <div id="teacherLoginMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 교사 대시보드 ===== -->
+  <div id="view-teacher-dashboard" class="view">
+    <button class="back" onclick="go('login')">← 처음으로</button>
+    <h2>👩‍🏫 교사용 대시보드</h2>
+    <div class="tabs">
+      <button class="tab-btn active" id="tabBtn-projects" onclick="switchTeacherTab('projects')">📁 프로젝트</button>
+      <button class="tab-btn" id="tabBtn-students" onclick="switchTeacherTab('students')">👥 학생 관리</button>
+    </div>
+
+    <!-- 탭 1: 프로젝트 -->
+    <div class="tab-panel active" id="tabPanel-projects">
+      <div class="box" style="padding:14px 18px;">
+        <label style="margin-bottom:6px">프로젝트 선택 <span style="color:var(--ink-faint)">(🟢 진행중 · ⚪ 종료)</span></label>
+        <select id="teacherProjectSelect" onchange="onTeacherProjectSelectChange()"></select>
+      </div>
+      <div class="box" id="teacherProjectCard"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:24px">
+        <h2 style="margin:0">📋 산출물 현황</h2>
+        <div>
+          <button class="btn-plain btn-outline btn-sm" onclick="openReflectionsView()">🪞 돌아보기 모아보기</button>
+          <button class="btn-plain btn-outline btn-sm" onclick="loadTeacherStudentTable(true)">🔄 새로고침</button>
+        </div>
+      </div>
+      <div class="hint">💡 줄을 누르면 산출물과 받은 평가를 볼 수 있고, 선생님이 직접 수정하거나 대신 등록할 수 있어요.</div>
+      <div id="teacherOverviewArea"></div>
+    </div>
+
+    <!-- 탭 2: 학생 관리 -->
+    <div class="tab-panel" id="tabPanel-students">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+        <h2 style="margin:0">👥 학생 관리</h2>
+        <div>
+          <button class="btn-plain btn-danger-outline btn-sm" onclick="manageResetAllPw()">🔄 전체 비밀번호 초기화</button>
+          <button class="btn-plain btn-outline btn-sm" id="pwToggleBtn" onclick="togglePwVisible()">👁 비밀번호 보기</button>
+          <button class="btn-plain btn-outline btn-sm" onclick="loadStudentManage()">🔄 새로고침</button>
+        </div>
+      </div>
+      <div class="hint">처음 비밀번호는 63+번호(예: 1번 → 6301)예요. "초기화"를 누르면 처음 비밀번호로 돌아가고, "직접 변경"으로 원하는 숫자 4자리를 정해줄 수 있어요.</div>
+      <div id="studentManageArea"></div>
+
+      <div class="box" style="margin-top:18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <b>📝 학생 명단 등록·수정</b>
+          <button class="btn-plain btn-outline btn-sm" onclick="toggleRosterBox()">열기/닫기</button>
+        </div>
+        <div id="rosterBox" style="display:none;margin-top:10px">
+          <div class="hint">한 줄에 한 명씩 <b>번호 이름</b>으로 적어주세요. (예: <code>1 김하늘</code>) 엑셀에서 번호·이름 두 칸을 복사해 붙여 넣어도 돼요.<br>
+            이미 있는 번호는 이름만 바뀌고 비밀번호는 그대로예요. 새 학생은 처음 비밀번호(63+번호)가 정해져요.</div>
+          <textarea id="rosterText" style="min-height:160px" placeholder="1 김하늘&#10;2 이바다"></textarea>
+          <button class="btn-plain" onclick="saveRoster()">명단 저장</button>
+          <div id="rosterMsg"></div>
+        </div>
+      </div>
+
+      <div class="box" style="margin-top:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <b>📥 예전 앱(앱스 스크립트)에서 기록 가져오기</b>
+          <button class="btn-plain btn-outline btn-sm" onclick="toggleImportBox()">열기/닫기</button>
+        </div>
+        <div id="importBox" style="display:none;margin-top:10px">
+          <div class="hint">예전 동료평가 앱의 학생·비밀번호·프로젝트·산출물·평가·돌아보기를 그대로 가져와요. 예전 사진은 구글 드라이브에 있는 그대로 보여요.<br>
+            여러 번 눌러도 같은 기록이 겹쳐 생기지 않아요(덮어쓰기). 단, 새 앱에서 이미 바꾼 내용이 있으면 예전 내용으로 돌아가니 처음 한 번만 쓰는 걸 추천해요.</div>
+          <label>내보내기 주소</label>
+          <input type="url" id="importUrl" placeholder="https://script.google.com/macros/s/.../exec?export=...">
+          <button class="btn-plain btn-secondary" onclick="importLegacy()">가져오기</button>
+          <div id="importMsg"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 교사: 새 프로젝트 시작 ===== -->
+  <div id="view-teacher-project-new" class="view">
+    <button class="back" onclick="backToTeacherDashboard()">← 취소</button>
+    <h2>🆕 새 프로젝트 시작하기</h2>
+    <div id="newProjDraftBanner"></div>
+    <div class="box">
+      <div class="hint">새 프로젝트를 시작해도 지금 진행 중인 프로젝트는 그대로 계속 진행돼요. 끝내고 싶은 프로젝트는 대시보드에서 선택한 뒤 "프로젝트 종료하기"를 눌러주세요.</div>
+      <label>프로젝트 제목</label>
+      <input type="text" id="newProjTitle" placeholder="예: AI 그림책 만들기">
+      <label>소개 문구</label>
+      <textarea id="newProjDesc" placeholder="이번 프로젝트에 대한 간단한 설명"></textarea>
+      <label>평가 문항</label>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;flex-wrap:wrap">
+        <select id="questionTemplateSelect" style="margin-bottom:0;max-width:320px" onchange="applyQuestionTemplate(this.value)"></select>
+        <span style="font-size:12px;color:var(--ink-faint)">활동 유형을 고르면 문항이 채워져요. 불러온 뒤 자유롭게 고칠 수 있어요.</span>
+      </div>
+      <div id="newProjQuestions"></div>
+      <button class="btn-plain btn-outline" onclick="addQuestionField('')">+ 문항 추가</button>
+
+      <label style="margin-top:16px">평가 방식</label>
+      <select id="newProjMode" onchange="onProjModeChange()">
+        <option value="개인">개인 — 학생 한 명이 하나씩 등록</option>
+        <option value="모둠">모둠 — 여러 명이 한 팀으로 등록</option>
+      </select>
+
+      <div id="groupSetupArea" style="display:none">
+        <div class="hint">
+          학생 이름을 끌어서 모둠 칸에 넣어주세요. 태블릿에서는 이름을 눌러 고른 뒤, 옮길 모둠 칸을 누르면 돼요. 모둠 이름은 칸 위쪽에서 바로 고칠 수 있어요.<br>
+          지금 다 배정하지 않고 <b>모둠 개수만 정해도</b> 프로젝트를 만들 수 있어요. 남은 학생은 나중에 대시보드의 "프로젝트 수정·모둠 배정"에서 배정하면 돼요.
+        </div>
+        <label>모둠 개수</label>
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+          <input type="number" id="groupCountInput" min="1" max="12" value="6" style="width:90px;margin-bottom:0">
+          <button class="btn-plain btn-outline btn-sm" onclick="applyGroupCount()">모둠 개수 적용</button>
+        </div>
+        <div id="newGroupBoard" class="gboard-wrap"></div>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="btn-plain btn-outline" onclick="saveProjectDraft()">💾 임시저장</button>
+        <button class="btn-plain btn-secondary" onclick="doCreateProject()">이 내용으로 새 프로젝트 시작</button>
+      </div>
+      <div id="newProjMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 교사: 프로젝트 제목/소개 수정 ===== -->
+  <div id="view-teacher-project-edit" class="view">
+    <button class="back" onclick="backToTeacherDashboard()">← 취소</button>
+    <h2>✏️ 프로젝트 수정</h2>
+    <div class="box">
+      <div class="hint">평가 문항이나 문항 개수를 바꾸고 싶다면 "새 프로젝트 시작하기"를 이용해주세요. 이미 만든 프로젝트의 문항 구성은 여기서 바꿀 수 없어요.</div>
+      <label>프로젝트 제목</label>
+      <input type="text" id="editProjTitle">
+      <label>소개 문구</label>
+      <textarea id="editProjDesc"></textarea>
+      <div id="editGroupArea" style="display:none">
+        <label style="margin-top:8px">모둠 구성</label>
+        <div class="hint">
+          학생 이름을 끌어서 모둠 칸에 넣어주세요. 태블릿에서는 이름을 눌러 고른 뒤, 옮길 모둠 칸을 누르면 돼요.<br>
+          🔒 표시는 이미 산출물을 등록한 모둠이라 삭제할 수 없어요. 학생을 다른 모둠으로 옮기면, 그 학생은 옮긴 모둠의 산출물을 함께 관리하게 돼요.
+        </div>
+        <div id="editGroupBoard" class="gboard-wrap"></div>
+      </div>
+      <button class="btn-plain" onclick="doEditProject()">저장하기</button>
+      <div id="editProjMsg"></div>
+    </div>
+  </div>
+
+  <!-- ===== 교사: 학생/모둠 상세 (산출물 + 받은 평가) ===== -->
+  <div id="view-teacher-student" class="view">
+    <button class="back" onclick="backToTeacherDashboard()">← 대시보드로</button>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap">
+      <div class="proj-tag" id="tDetailProjTag"></div>
+      <div>
+        <span id="tDetailLoadedAt" style="font-size:12px;color:var(--ink-faint);margin-right:6px"></span>
+        <button class="btn-plain btn-outline btn-sm" onclick="loadTeacherDetail_()">🔄 새로고침</button>
+      </div>
+    </div>
+    <h2 style="margin-top:4px" id="teacherStudentName"></h2>
+    <div id="tDetailMembers" class="hint" style="display:none"></div>
+    <div id="teacherStudentSubmissionArea"></div>
+    <div id="tDetailActions" style="margin-bottom:18px"></div>
+    <div id="tDetailResultSection">
+      <h2 style="font-size:17px">📊 받은 평가</h2>
+      <div class="box"><div id="teacherStudentArea"></div></div>
+    </div>
+    <div id="tDetailReflections"></div>
+  </div>
+
+  <!-- ===== 교사: 피드백 돌아보기 모아보기 ===== -->
+  <div id="view-teacher-reflections" class="view">
+    <button class="back" onclick="backToTeacherDashboard()">← 대시보드로</button>
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h2 style="margin:0">🪞 피드백 돌아보기 모아보기</h2>
+      <button class="btn-plain btn-outline btn-sm" onclick="loadReflectionsView()">🔄 새로고침</button>
+    </div>
+    <div class="proj-tag" id="reflProjTag" style="margin-top:10px"></div>
+    <div class="hint">학생들이 "나의 평가 결과보기" 화면에서 친구들의 피드백을 읽고 쓴 내용이에요. 고친 점이나 다음에 적용할 점을 확인할 수 있어요.</div>
+    <div id="reflListArea"></div>
+  </div>
+
+  <!-- ===== 교사: 산출물 대신 등록·수정 ===== -->
+  <div id="view-teacher-sub-edit" class="view">
+    <button class="back" onclick="go('teacher-student')">← 뒤로</button>
+    <h2 id="tSubEditHeading">산출물 수정</h2>
+    <div class="proj-tag" id="tSubEditTag"></div>
+    <div class="hint">선생님이 저장한 내용은 학생 화면에도 바로 반영돼요. 종료된 프로젝트도 선생님은 등록·수정할 수 있어요.</div>
+    <div class="box">
+      <label>제목</label>
+      <input type="text" id="tSubTitle">
+      <label>소개</label>
+      <textarea id="tSubDesc"></textarea>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px;">
+        <div style="flex:1;min-width:130px;max-width:220px;">
+          <label>산출물 사진</label>
+          <div class="photo-box" onclick="document.getElementById('tsubPhotoInput').click()">
+            <span class="photo-placeholder" id="tsubPhotoPlaceholder">📷<br>눌러서 사진 선택</span>
+            <img id="tsubPhotoPreview" style="display:none">
+          </div>
+          <input type="file" id="tsubPhotoInput" accept="image/*" style="display:none" onchange="onPhotoSelected(this,'tsub')">
+        </div>
+        <div style="flex:2;min-width:180px;">
+          <label>URL (게시한 링크)</label>
+          <input type="url" id="tSubUrl" placeholder="https://...">
+        </div>
+      </div>
+      <button class="btn-plain" onclick="doTeacherSaveSubmission()">저장하기</button>
+      <div id="tSubEditMsg"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== 오른쪽 아래 버전 표시 (누르면 변경 기록) ===== -->
+<div class="version-panel" id="versionPanel"></div>
+<div class="version-badge" id="versionBadge" onclick="toggleVersionPanel()" title="눌러서 변경 기록 보기"></div>
+
+<script>
+/* ===================== 버전 기록 =====================
+ * 사소한 수정은 +0.01, 구조가 바뀌거나 의미가 큰 변화는 다음 0.1 단위로 올린다.
+ * 맨 위 항목이 현재 버전이다. (major: true = 0.1 단위 변경)
+ */
+const APP_AUTHOR = '푸르이든';
+const VERSION_HISTORY = [
+  { v: '2.00', major: true, text: 'Firebase + GitHub로 새로 옮김 (훨씬 빨라짐, 교사 이메일 로그인, 학생 명단 등록, 예전 기록 가져오기)' },
+  { v: '1.95', text: '교사용 학생·모둠 상세 화면에 새로고침 버튼 추가 (받은 평가·돌아보기 최신으로 다시 불러오기)' },
+  { v: '1.94', text: '학생 관리 탭에 전체 비밀번호 초기화 버튼 추가' },
+  { v: '1.93', text: '산출물 수정 화면에서도 영상 링크를 숨김 (비워두면 기존 영상 유지, 새 링크를 넣을 때만 변경)' },
+  { v: '1.92', text: '영상 링크(유튜브·드라이브·비메오)는 주소를 숨기고 화면 안 영상으로만 보이게 변경' },
+  { v: '1.91', text: '1.90에서 화면이 멈추던 오류 수정 (앱스 스크립트가 주소의 // 를 주석으로 잘라내던 문제)' },
+  { v: '1.90', major: true, text: '영상·슬라이드 바로보기, 코멘트 문장틀 버튼, 활동 유형별 평가 문항 불러오기, 피드백 돌아보기(학생 작성·교사 모아보기) 추가' },
+  { v: '1.81', text: '모둠 프로젝트의 산출물 현황을 사진이 크게 보이는 보드(카드) 형태로 변경' },
+  { v: '1.80', major: true, text: '프로젝트 삭제 기능 추가 (문항·모둠·산출물·사진·평가를 함께 삭제, "삭제" 입력 확인)' },
+  { v: '1.73', text: '첫 화면의 교사용 버튼을 오른쪽 위로 옮김' },
+  { v: '1.72', text: '산출물 현황 표에 받은 평점(종합 평균) 칸 추가' },
+  { v: '1.71', text: '오른쪽 아래에 만든이·버전 표시와 변경 기록 추가' },
+  { v: '1.70', major: true, text: '교사 대시보드에 학생 관리 탭 분리(비밀번호 초기화·직접 변경), 선생님이 산출물을 대신 등록·수정, 프로젝트 기록 초기화가 비밀번호를 건드리지 않도록 변경' },
+  { v: '1.60', major: true, text: '모둠 구성을 끌어다 놓기로 배정, 모둠 개수만 정하고 나중에 배정 가능, 새 프로젝트 임시저장' },
+  { v: '1.50', major: true, text: '여러 프로젝트 동시 진행, 교사가 직접 종료·재개, 종료된 프로젝트는 학생이 보기만 가능' },
+  { v: '1.40', major: true, text: '모둠 평가 방식 추가 (개인/모둠 선택, 모둠별 산출물 등록·현황)' },
+  { v: '1.30', major: true, text: '산출물 사진 업로드 (구글 드라이브 저장, 자동 크기 줄이기)' },
+  { v: '1.20', major: true, text: '화면 디자인 전면 개편 (색상, 글꼴, 아이콘 메뉴, 포스트잇 색)' },
+  { v: '1.11', text: '프로젝트 순번이 뒤섞이던 문제 수정' },
+  { v: '1.10', major: true, text: '여러 회차 프로젝트 지원 (프로젝트별 문항, 지난 프로젝트 결과 보기)' },
+  { v: '1.04', text: '교사 대시보드 30초 자동 새로고침, 화면을 보고 있을 때만 갱신' },
+  { v: '1.03', text: '첫 화면 로딩 속도 개선' },
+  { v: '1.02', text: '날짜 값 때문에 결과 화면이 비어 보이던 오류 수정' },
+  { v: '1.01', text: '0으로 시작하는 비밀번호가 맞지 않던 오류 수정' },
+  { v: '1.00', major: true, text: '첫 완성: 학생 로그인, 산출물 등록, 별점·코멘트 동료평가, 결과보기, 교사 대시보드' }
+];
+const APP_VERSION = VERSION_HISTORY[0].v;
+
+function renderVersionBadge_() {
+  document.getElementById('versionBadge').textContent = '만든이 : ' + APP_AUTHOR + ' · v' + APP_VERSION;
+  document.getElementById('versionPanel').innerHTML =
+    '<h3>변경 기록</h3>' +
+    VERSION_HISTORY.map(h =>
+      `<div class="vrow"><div class="vnum${h.major ? ' major' : ''}">v${h.v}</div><div class="vtext">${escapeHtml(h.text)}</div></div>`
+    ).join('');
+}
+
+function toggleVersionPanel() {
+  document.getElementById('versionPanel').classList.toggle('open');
+}
+
+// 패널 바깥을 누르면 닫기
+document.addEventListener('click', e => {
+  const panel = document.getElementById('versionPanel');
+  if (!panel.classList.contains('open')) return;
+  if (e.target.closest('#versionPanel') || e.target.closest('#versionBadge')) return;
+  panel.classList.remove('open');
+});
+</script>
+
+<script>
+let INIT = { students: [], activeCount: 0 };
+let loggedInStudent = null;
+let teacherPw = null;
+let selectedStars = {};
+let wallPollTimer = null;
+let teacherPollTimer = null;
+let teacherProjectsCache = [];
+let teacherSelectedProjectId = null; // 교사 드롭다운에서 선택된 프로젝트
+let regPhotoData = null;  // 등록 폼에서 선택한 사진 {base64, mimeType, fileName}
+let editPhotoData = null; // 수정 폼에서 새로 선택한 사진 (선택 안 하면 null = 기존 사진 유지)
+let teacherPhotoData = null; // 선생님이 대신 등록·수정할 때 새로 선택한 사진
+
+let teacherTab = 'projects';      // 교사 대시보드에서 보고 있는 탭
+let teacherOverviewList = [];     // 산출물 현황 표의 줄 데이터 (줄을 누르면 번호로 찾음)
+let teacherOverviewMode = '개인';
+let lastOverviewSig = '';      // 산출물 현황 마지막 데이터 (같으면 다시 그리지 않음)
+let teacherDetail = null;         // 지금 보고 있는 학생/모둠 상세 { type, name, groupId, groupName, members, result }
+let studentManageList = [];
+let pwVisible = false;
+
+let studentProjects = [];        // 학생 메인: 전체 프로젝트 목록 (최신순)
+let currentProject = null;       // 학생이 지금 선택한 프로젝트
+let currentEvalQuestions = [];   // 담벼락에서 받아온 선택 프로젝트의 평가 문항
+let currentEvalReadonly = false; // 종료된 프로젝트면 true (보기만 가능)
+
+const DEFAULT_QUESTION_SEED = [
+  '프로그램이 잘 작동하나요?',
+  '결과물이 창의적인가요?',
+  '화면 구성이나 사용 경험이 만족스러운가요?',
+  '주제에 맞게 잘 표현했나요?'
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+  renderVersionBadge_();
+  refreshInit_();
+});
+
+function refreshInit_() {
+  google.script.run.withSuccessHandler(onInitLoaded).withFailureHandler(onLoadFail).getInitData();
+}
+
+function onInitLoaded(data) {
+  INIT = data;
+  const sel = document.getElementById('loginNameSelect');
+  const prev = sel.value;
+  fillSelect('loginNameSelect', data.students);
+  if (prev) sel.value = prev;
+  document.getElementById('appSub').textContent = data.activeCount
+    ? '지금 진행 중인 프로젝트가 ' + data.activeCount + '개 있어요'
+    : '지금 진행 중인 프로젝트는 없어요. 지난 프로젝트는 로그인해서 볼 수 있어요.';
+}
+
+function onLoadFail(err) {
+  document.getElementById('appSub').innerHTML =
+    '<div class="msg error">연결하지 못했어요: ' + escapeHtml(err.message) + '<br>인터넷 연결을 확인하고 새로고침해 주세요.</div>';
+}
+
+function fillSelect(id, names) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="">-- 이름 선택 --</option>' +
+    names.map(n => `<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
+}
+
+const TEACHER_VIEWS = ['teacher-login', 'teacher-dashboard', 'teacher-project-new', 'teacher-project-edit', 'teacher-student', 'teacher-sub-edit', 'teacher-reflections'];
+
+function go(viewKey) {
+  if (viewKey === 'login' && teacherPw) {
+    teacherPw = null; // 처음 화면으로 나가면 교사 로그아웃 (같은 기기에서 학생이 쓰더라도 안전하게)
+    google.script.run.teacherSignOut();
+  }
+  if (viewKey !== 'eval-wall') stopWallPolling();
+  if (viewKey !== 'teacher-dashboard') stopTeacherPolling();
+  // 화면을 떠날 때 그 화면의 영상은 멈추고(주소를 비워두고), 돌아오면 다시 불러온다
+  document.querySelectorAll('.view').forEach(v => {
+    if (v.id === 'view-' + viewKey) return;
+    v.querySelectorAll('iframe.embed-frame').forEach(f => {
+      if (f.getAttribute('src') && f.getAttribute('src') !== 'about:blank') { f.dataset.src = f.getAttribute('src'); f.setAttribute('src', 'about:blank'); }
+    });
+  });
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const nextView = document.getElementById('view-' + viewKey);
+  nextView.classList.add('active');
+  nextView.querySelectorAll('iframe.embed-frame').forEach(f => {
+    if (f.dataset.src && f.getAttribute('src') === 'about:blank') f.setAttribute('src', f.dataset.src);
+  });
+  document.getElementById('app').classList.toggle('app-wide', TEACHER_VIEWS.indexOf(viewKey) !== -1);
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && document.getElementById('view-teacher-dashboard').classList.contains('active')
+      && teacherTab === 'projects') {
+    loadTeacherStudentTable(true);
+  }
+});
+
+function escapeHtml(s) {
+  return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+function setMsg(id, text, type) {
+  const el = document.getElementById(id);
+  if (!text) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="msg ${type}">${escapeHtml(text)}</div>`;
+}
+
+function serverError_(setMsgId) {
+  return err => setMsg(setMsgId, '오류가 발생했습니다: ' + err.message, 'error');
+}
+
+function isActiveProject_(p) { return p && p.status === '진행중'; }
+
+function projectTagText_(p) {
+  if (!p) return '';
+  return p.seq + '번째 프로젝트 · ' + (isActiveProject_(p) ? '진행중' : '종료') + (p.mode === '모둠' ? ' · 모둠' : '');
+}
+
+function setProjTag_(id, p) {
+  const el = document.getElementById(id);
+  if (!p) { el.style.display = 'none'; return; }
+  el.textContent = projectTagText_(p) + (id === 'mainProjSeq' ? '' : ' · ' + p.title);
+  el.classList.toggle('ended', !isActiveProject_(p));
+  el.style.display = 'inline-block';
+}
+
+/* ===================== 산출물 사진: 선택/축소/미리보기 (등록·수정 공용) ===================== */
+function readAndResizeImage_(file, callback) {
+  if (!file.type || !file.type.startsWith('image/')) {
+    alert('이미지 파일만 선택할 수 있어요.');
+    return;
+  }
+  if (file.size > 8 * 1024 * 1024) {
+    alert('사진 용량이 너무 커요. 8MB 이하 사진으로 선택해주세요.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX = 1280;
+      let w = img.width, h = img.height;
+      if (w > MAX || h > MAX) {
+        if (w >= h) { h = Math.round(h * MAX / w); w = MAX; }
+        else { w = Math.round(w * MAX / h); h = MAX; }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+      callback(dataUrl);
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function onPhotoSelected(input, target) {
+  const file = input.files[0];
+  if (!file) return;
+  readAndResizeImage_(file, dataUrl => {
+    const data = { base64: dataUrl.split(',')[1], mimeType: 'image/jpeg', fileName: 'photo.jpg' };
+    if (target === 'reg') regPhotoData = data;
+    else if (target === 'tsub') teacherPhotoData = data;
+    else editPhotoData = data;
+    const preview = document.getElementById(target + 'PhotoPreview');
+    const placeholder = document.getElementById(target + 'PhotoPlaceholder');
+    preview.src = dataUrl;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+  });
+}
+
+function resetPhotoBox_(target, existingUrl) {
+  const input = document.getElementById(target + 'PhotoInput');
+  const preview = document.getElementById(target + 'PhotoPreview');
+  const placeholder = document.getElementById(target + 'PhotoPlaceholder');
+  if (input) input.value = '';
+  if (target === 'reg') regPhotoData = null;
+  else if (target === 'tsub') teacherPhotoData = null;
+  else editPhotoData = null;
+  if (existingUrl) {
+    preview.src = existingUrl;
+    preview.style.display = 'block';
+    placeholder.style.display = 'none';
+  } else {
+    preview.style.display = 'none';
+    placeholder.style.display = 'block';
+  }
+}
+
+function renderMediaRowHtml(imageUrl, url) {
+  const photoHtml = imageUrl
+    ? `<a href="${imageUrl}" target="_blank" rel="noopener"><img src="${imageUrl}" alt="산출물 사진 (새 창에서 크게 보기)"></a>`
+    : `<div class="none">사진 없음</div>`;
+  const embed = getEmbedInfo_(url);
+  // 영상 링크(유튜브·드라이브·비메오)는 주소를 보여주지 않고 화면 안 영상으로만 본다
+  const urlHtml = (embed && embed.hideLink)
+    ? `<span style="color:var(--ink-soft);font-size:13px">🎬 아래에서 영상을 바로 볼 수 있어요</span>`
+    : url
+      ? `<a class="link-a" href="${url}" target="_blank">🔗 ${escapeHtml(url)}</a>`
+      : `<span style="color:var(--ink-faint);font-size:13px">등록된 링크가 없어요</span>`;
+  return `<div class="media-row">
+    <div class="photo-slot">${photoHtml}</div>
+    <div class="url-slot">${urlHtml}</div>
+  </div>` + renderEmbedHtml_(url);
+}
+
+/* ===================== 영상·슬라이드 바로보기 =====================
+ * 유튜브, 구글 드라이브 영상, 구글 슬라이드·문서, 캔바, 비메오 링크를 앱 안에서 바로 보여준다.
+ * 그 밖의 링크는 지금처럼 링크만 보여준다.
+ */
+// 주의: 앱스 스크립트는 화면을 내보낼 때 주석을 지우는데, 정규식(/.../)과 'https://'가 한 줄에 있으면
+// '//' 뒤를 주석으로 잘못 알고 잘라버린다. 그래서 주소는 아래 상수로 따로 두고, 정규식과 같은 줄에 쓰지 않는다.
+const YT_EMBED = 'https://www.youtube.com/embed/';
+
+function getEmbedInfo_(rawUrl) {
+  if (!rawUrl) return null;
+  let u;
+  try { u = new URL(String(rawUrl).trim()); } catch (e) { return null; }
+  const host = u.hostname.replace(/^www\.|^m\./, '');
+  const path = u.pathname;
+  let m;
+  // 유튜브: watch?v=, youtu.be/, shorts/, embed/, live/
+  if (host === 'youtube.com' || host === 'music.youtube.com') {
+    let id = u.searchParams.get('v');
+    if (!id && (m = path.match(/^\/(?:shorts|embed|live)\/([\w-]{11})/))) id = m[1];
+    const validId = id && /^[\w-]{11}$/.test(id);
+    if (validId) return { kind: 'video', label: '유튜브', hideLink: true, src: YT_EMBED + id + '?rel=0' };
+  }
+  if (host === 'youtu.be' && (m = path.match(/^\/([\w-]{11})/))) {
+    return { kind: 'video', label: '유튜브', hideLink: true, src: YT_EMBED + m[1] + '?rel=0' };
+  }
+  // 구글 드라이브 파일 (영상 등)
+  if (host === 'drive.google.com') {
+    let id = null;
+    if ((m = path.match(/\/file\/d\/([\w-]+)/))) id = m[1];
+    else if (u.searchParams.get('id')) id = u.searchParams.get('id');
+    if (id) return { kind: 'video', label: '구글 드라이브', hideLink: true, src: 'https://drive.google.com/file/d/' + id + '/preview' };
+  }
+  // 구글 슬라이드 / 문서
+  if (host === 'docs.google.com') {
+    if ((m = path.match(/\/presentation\/d\/([\w-]+)/))) {
+      return { kind: 'video', label: '구글 슬라이드', src: 'https://docs.google.com/presentation/d/' + m[1] + '/embed?start=false&loop=false' };
+    }
+    if ((m = path.match(/\/document\/d\/([\w-]+)/))) {
+      return { kind: 'doc', label: '구글 문서', src: 'https://docs.google.com/document/d/' + m[1] + '/preview' };
+    }
+  }
+  // 캔바 (디자인을 "공개 보기 링크"로 공유했을 때)
+  if (host === 'canva.com' && (m = path.match(/^\/design\/([\w-]+)\/([\w-]+)/))) {
+    return { kind: 'video', label: '캔바', src: 'https://www.canva.com/design/' + m[1] + '/' + m[2] + '/view?embed' };
+  }
+  // 비메오
+  if (host === 'vimeo.com' && (m = path.match(/^\/(\d+)/))) {
+    return { kind: 'video', label: '비메오', hideLink: true, src: 'https://player.vimeo.com/video/' + m[1] };
+  }
+  return null;
+}
+
+function renderEmbedHtml_(url) {
+  const info = getEmbedInfo_(url);
+  if (!info) return '';
+  return `<div class="embed-wrap">
+    <div class="embed-frame-box${info.kind === 'doc' ? ' doc' : ''}">
+      <iframe class="embed-frame" src="${escapeHtml(info.src)}" title="${escapeHtml(info.label)} 바로보기" loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    <div class="embed-note">▶ ${escapeHtml(info.label)} 바로보기 · ${info.hideLink
+      ? '화면이 안 나오면 영상 공유 설정이 "링크가 있는 모든 사용자"인지 확인해 주세요.'
+      : '화면이 안 나오면 위 링크를 눌러 새 창에서 열어보세요. (공유 설정이 "링크가 있는 모든 사용자"여야 보여요)'}</div>
+  </div>`;
+}
+
+/* ===================== 로그인 ===================== */
+function doStudentLogin() {
+  const name = document.getElementById('loginNameSelect').value;
+  const pw = document.getElementById('loginPwInput').value.trim();
+  if (!name) { setMsg('loginMsg', '이름을 선택해주세요.', 'error'); return; }
+  if (!pw) { setMsg('loginMsg', '비밀번호를 입력해주세요.', 'error'); return; }
+  setMsg('loginMsg', '확인 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        loggedInStudent = name;
+        document.getElementById('mainUserName').textContent = name + '님';
+        document.getElementById('loginPwInput').value = '';
+        setMsg('loginMsg', '', '');
+        currentProject = null;
+        setCurrentProject(null);
+        go('main');
+        loadStudentProjects(null);
+      } else {
+        setMsg('loginMsg', res.message || '로그인에 실패했습니다.', 'error');
+      }
+    })
+    .withFailureHandler(serverError_('loginMsg'))
+    .verifyStudentLogin(name, pw);
+}
+
+function logout() {
+  google.script.run.studentSignOut();
+  loggedInStudent = null;
+  currentProject = null;
+  studentProjects = [];
+  document.getElementById('loginPwInput').value = '';
+  go('login');
+  refreshInit_();
+}
+
+function openChangePw() {
+  document.getElementById('curPwInput').value = '';
+  document.getElementById('newPwInput').value = '';
+  document.getElementById('newPwInput2').value = '';
+  document.getElementById('changePwMsg').innerHTML = '';
+  go('change-pw');
+}
+
+function doChangePw() {
+  const cur = document.getElementById('curPwInput').value.trim();
+  const n1 = document.getElementById('newPwInput').value.trim();
+  const n2 = document.getElementById('newPwInput2').value.trim();
+  if (n1 !== n2) { setMsg('changePwMsg', '새 비밀번호가 서로 일치하지 않습니다.', 'error'); return; }
+  setMsg('changePwMsg', '변경 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) setMsg('changePwMsg', '비밀번호가 변경되었습니다.', 'success');
+      else setMsg('changePwMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('changePwMsg'))
+    .changeStudentPassword(loggedInStudent, cur, n1);
+}
+
+/* ===================== 학생 메인: 프로젝트 선택 ===================== */
+function loadStudentProjects(preferId) {
+  setMainMsg('프로젝트 목록을 불러오는 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res.success) { setMainMsg(res.message || '불러오기 실패', 'error'); return; }
+      studentProjects = res.list;
+      const sel = document.getElementById('mainProjectSelect');
+      sel.innerHTML = studentProjects.map(p =>
+        `<option value="${p.id}">${isActiveProject_(p) ? '🟢' : '⚪'} ${p.seq}번째 · ${escapeHtml(p.title)}</option>`
+      ).join('');
+      let pick = preferId ? studentProjects.find(p => p.id === preferId) : null;
+      if (!pick) pick = studentProjects.find(p => isActiveProject_(p)) || studentProjects[0] || null;
+      setCurrentProject(pick);
+      setMainMsg('', '');
+      if (!pick) setMainMsg('아직 만들어진 프로젝트가 없어요.', '');
+    })
+    .withFailureHandler(err => setMainMsg('불러오기 실패: ' + err.message, 'error'))
+    .getStudentProjectHistory(loggedInStudent);
+}
+
+function onMainProjectChange() {
+  const id = document.getElementById('mainProjectSelect').value;
+  setCurrentProject(studentProjects.find(p => p.id === id) || null);
+  setMainMsg('', '');
+}
+
+function setCurrentProject(p) {
+  currentProject = p;
+  const sel = document.getElementById('mainProjectSelect');
+  if (p) sel.value = p.id;
+  setProjTag_('mainProjSeq', p);
+  document.getElementById('mainTitle').textContent = p ? p.title : '';
+  document.getElementById('mainProjDesc').textContent = p ? (p.desc || '') : '';
+
+  const active = isActiveProject_(p);
+  document.getElementById('mainProjNotice').innerHTML = (p && !active)
+    ? '<div class="hint">📚 종료된 프로젝트예요. 내 산출물과 친구들의 산출물, 받은 평가를 볼 수만 있어요.</div>'
+    : '';
+  document.getElementById('menuMySubLabel').textContent = active ? '나의 산출물 등록' : '나의 산출물 보기';
+  document.getElementById('menuMySubDesc').textContent = active ? '내가 만든 산출물을 등록하거나 확인해요' : '이 프로젝트에서 내가 등록했던 산출물을 봐요';
+  document.getElementById('menuEvalLabel').textContent = active ? '동료 평가하기' : '친구들의 산출물 보기';
+  document.getElementById('menuEvalDesc').textContent = active ? '친구들의 산출물에 별점과 코멘트를 남겨요' : '친구들이 등록했던 산출물을 구경해요';
+}
+
+function requireCurrentProject_() {
+  if (!currentProject) { setMainMsg('먼저 프로젝트를 선택해주세요.', 'error'); return false; }
+  return true;
+}
+
+function setMainMsg(text, type) {
+  const el = document.getElementById('mainMsg');
+  if (!text) { el.innerHTML = ''; return; }
+  el.innerHTML = `<div class="msg ${type || ''}">${escapeHtml(text)}</div>`;
+}
+
+/* ===================== 나의 산출물 ===================== */
+function openMySub() {
+  if (!requireCurrentProject_()) return;
+  setMainMsg('불러오는 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      try {
+        setMainMsg('', '');
+        if (res.noGroup) {
+          setMainMsg('이 프로젝트에서는 아직 모둠에 배정되지 않았어요. 선생님께 문의해주세요.', 'error');
+          return;
+        }
+        if (res.found) {
+          renderMySubInfo(res);
+          go('mysub-info');
+        } else if (!res.projectActive) {
+          setMainMsg('이 프로젝트에는 등록했던 산출물이 없어요.', '');
+        } else {
+          document.getElementById('regWhoTag').textContent =
+            currentProject.seq + '번째 · ' + currentProject.title + ' · ' + (res.groupName || loggedInStudent);
+          const gm = document.getElementById('regGroupMembers');
+          if (res.members && res.members.length > 1) {
+            gm.textContent = '구성원: ' + res.members.join(', ');
+            gm.style.display = 'block';
+          } else {
+            gm.style.display = 'none';
+          }
+          document.getElementById('regTitle').value = '';
+          document.getElementById('regDesc').value = '';
+          document.getElementById('regUrl').value = '';
+          document.getElementById('regMsg').innerHTML = '';
+          resetPhotoBox_('reg', null);
+          go('mysub-register');
+        }
+      } catch (e) {
+        setMainMsg('화면 표시 중 오류: ' + e.message, 'error');
+      }
+    })
+    .withFailureHandler(err => setMainMsg('불러오기 실패: ' + err.message, 'error'))
+    .getMySubmission(loggedInStudent, currentProject.id);
+}
+
+function doRegister() {
+  const title = document.getElementById('regTitle').value.trim();
+  const url = document.getElementById('regUrl').value.trim();
+  const desc = document.getElementById('regDesc').value.trim();
+  setMsg('regMsg', regPhotoData ? '사진 업로드 중... 잠시만 기다려주세요' : '등록 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) openMySub();
+      else setMsg('regMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('regMsg'))
+    .registerSubmission(loggedInStudent, currentProject.id, title, url, desc, regPhotoData);
+}
+
+function renderMySubInfo(sub) {
+  document.getElementById('infoWhoTag').textContent =
+    currentProject.seq + '번째 · ' + currentProject.title + ' · ' + (sub.groupName || loggedInStudent);
+  const gm = document.getElementById('infoGroupMembers');
+  if (sub.members && sub.members.length > 1) {
+    gm.textContent = '구성원: ' + sub.members.join(', ');
+    gm.style.display = 'block';
+  } else {
+    gm.style.display = 'none';
+  }
+  document.getElementById('infoEndedNotice').innerHTML = sub.projectActive
+    ? '' : '<div class="hint">📚 종료된 프로젝트라 수정하거나 삭제할 수 없어요.</div>';
+  document.getElementById('infoActions').style.display = sub.projectActive ? 'block' : 'none';
+  document.getElementById('infoTitle').textContent = sub.title;
+  document.getElementById('infoDesc').textContent = sub.desc || '';
+  document.getElementById('infoMediaArea').innerHTML = renderMediaRowHtml(sub.imageUrl, sub.url);
+}
+
+/* ===================== 나의 평가 결과보기 ===================== */
+function openMyResults() {
+  if (!requireCurrentProject_()) return;
+  document.getElementById('myResultsName').textContent = loggedInStudent;
+  setProjTag_('myResultsProjTag', currentProject);
+  go('my-results');
+  loadMyResultsFor(currentProject.id);
+}
+
+function loadMyResultsFor(projectId) {
+  document.getElementById('myResultsArea').innerHTML = '<div class="loading">불러오는 중...</div>';
+  document.getElementById('myReflectionArea').innerHTML = '';
+  google.script.run
+    .withSuccessHandler(result => {
+      try {
+        document.getElementById('myResultsArea').innerHTML = renderResultsHtml(result);
+        renderMyReflection_(result, projectId);
+      } catch (e) {
+        document.getElementById('myResultsArea').innerHTML =
+          '<div class="msg error">화면 표시 중 오류: ' + escapeHtml(e.message) + '</div>';
+      }
+    })
+    .withFailureHandler(err => {
+      document.getElementById('myResultsArea').innerHTML =
+        '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+    })
+    .getMyEvaluationResults(loggedInStudent, projectId);
+}
+
+/* ===================== 피드백 돌아보기 (학생) ===================== */
+const REFLECTION_MAX = 1000;
+
+function renderMyReflection_(result, projectId) {
+  const area = document.getElementById('myReflectionArea');
+  if (!result || !result.hasSubmission) { area.innerHTML = ''; return; }
+  const r = result.myReflection || { text: '', updatedAt: '' };
+  const isGroup = currentProject && currentProject.mode === '모둠';
+  area.innerHTML = `<div class="box refl-box">
+    <h3>🪞 피드백 돌아보기</h3>
+    <div class="refl-guide">
+      친구들의 평가와 코멘트를 읽고 생각해 보세요.<br>
+      · 친구들의 피드백으로 <b>고친 점</b>이 있나요?<br>
+      · 다음 작품을 만들 때 <b>적용하고 싶은 점</b>은 무엇인가요?<br>
+      · 친구들의 작품을 보면서 <b>배운 점</b>이 있나요?
+      ${isGroup ? '<br><span style="color:var(--ink-faint)">(돌아보기는 모둠원 각자 써요)</span>' : ''}
+    </div>
+    <textarea id="myReflText" maxlength="${REFLECTION_MAX}" placeholder="예) 친구가 자막이 빠르다고 해서 자막 시간을 늘렸다. 다음에는 처음부터 자막 길이를 생각하며 만들고 싶다.">${escapeHtml(r.text)}</textarea>
+    <div class="refl-count"><span id="myReflCount">${r.text.length}</span> / ${REFLECTION_MAX}자</div>
+    <button class="btn-plain" onclick="saveMyReflection_('${escapeHtml(projectId)}')">💾 돌아보기 저장</button>
+    <span id="myReflSaved" style="font-size:12px;color:var(--ink-faint);margin-left:6px">${r.updatedAt ? '마지막 저장: ' + escapeHtml(r.updatedAt) : ''}</span>
+    <div id="myReflMsg"></div>
+  </div>`;
+  const ta = document.getElementById('myReflText');
+  ta.addEventListener('input', () => { document.getElementById('myReflCount').textContent = ta.value.length; });
+}
+
+function saveMyReflection_(projectId) {
+  const text = document.getElementById('myReflText').value.trim();
+  if (!text) { setMsg('myReflMsg', '돌아보기 내용을 써주세요.', 'error'); return; }
+  setMsg('myReflMsg', '저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        setMsg('myReflMsg', '저장했어요. 선생님도 볼 수 있어요.', 'success');
+        document.getElementById('myReflSaved').textContent = '마지막 저장: ' + res.updatedAt;
+      } else setMsg('myReflMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('myReflMsg'))
+    .saveMyReflection(loggedInStudent, projectId, text);
+}
+
+function refreshMyResults() {
+  if (currentProject) loadMyResultsFor(currentProject.id);
+}
+
+function openEditForm() {
+  google.script.run
+    .withSuccessHandler(sub => {
+      if (!sub.found) { alert('등록된 산출물이 없습니다.'); return; }
+      if (!sub.projectActive) { alert('종료된 프로젝트라 수정할 수 없어요.'); return; }
+      document.getElementById('editTitle').value = sub.title;
+      document.getElementById('editDesc').value = sub.desc || '';
+      setUrlFieldForEdit_('editUrl', sub.url);
+      document.getElementById('editMsg').innerHTML = '';
+      resetPhotoBox_('edit', sub.imageUrl || null);
+      go('mysub-edit');
+    })
+    .withFailureHandler(err => alert('불러오기 실패: ' + err.message))
+    .getMySubmission(loggedInStudent, currentProject.id);
+}
+
+function doUpdate() {
+  const title = document.getElementById('editTitle').value.trim();
+  const url = document.getElementById('editUrl').value.trim();
+  const desc = document.getElementById('editDesc').value.trim();
+  if (!title) { setMsg('editMsg', '제목은 꼭 입력해주세요.', 'error'); return; }
+  if (!url && !document.getElementById('editUrl').dataset.hasHidden) { setMsg('editMsg', 'URL을 입력해주세요.', 'error'); return; }
+  setMsg('editMsg', editPhotoData ? '사진 업로드 중... 잠시만 기다려주세요' : '저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) openMySub();
+      else setMsg('editMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('editMsg'))
+    .updateSubmission(loggedInStudent, currentProject.id, title, url, desc, editPhotoData);
+}
+
+// 수정 화면의 URL 칸 채우기: 영상 링크면 주소를 보여주지 않고 비워둔다.
+// 비워둔 채 저장하면 서버가 기존 링크를 그대로 유지하고, 새 링크를 넣을 때만 바뀐다.
+function setUrlFieldForEdit_(inputId, url) {
+  const input = document.getElementById(inputId);
+  const embed = getEmbedInfo_(url);
+  if (embed && embed.hideLink) {
+    input.value = '';
+    input.dataset.hasHidden = '1';
+    input.placeholder = '🎬 ' + embed.label + ' 영상이 등록되어 있어요 (바꾸려면 새 링크를 넣으세요)';
+  } else {
+    input.value = url || '';
+    delete input.dataset.hasHidden;
+    input.placeholder = 'https://...';
+  }
+}
+
+function openDeleteForm() {
+  document.getElementById('delMsg').innerHTML = '';
+  go('mysub-delete');
+}
+
+function doDelete() {
+  setMsg('delMsg', '삭제 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) go('main');
+      else setMsg('delMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('delMsg'))
+    .deleteSubmission(loggedInStudent, currentProject.id);
+}
+
+/* ===================== 결과 렌더링 (학생/교사 공용) ===================== */
+function renderResultsHtml(result) {
+  if (result.error) return '<div class="msg error">' + escapeHtml(result.message) + '</div>';
+  if (!result.hasSubmission) {
+    if (result.noGroup) return '<div class="msg">이 프로젝트에서는 모둠에 배정되지 않았어요.</div>';
+    return '<div class="msg">등록된 산출물이 없습니다.</div>';
+  }
+  const groupTag = (result.submission && result.submission.groupName)
+    ? `<div class="proj-tag">${escapeHtml(result.submission.groupName)}</div>` : '';
+  if (result.evaluationCount === 0) return groupTag + '<div class="msg">아직 받은 평가가 없습니다.</div>';
+
+  let html = groupTag + `<div class="overall">
+      <div class="num">${result.overallAverage.toFixed(1)}</div>
+      <div class="stars">${starString(result.overallAverage)}</div>
+      <div style="color:var(--ink-faint);font-size:13px">평가 ${result.evaluationCount}명 참여</div>
+    </div>`;
+
+  result.questions.forEach(q => {
+    const avg = result.averages[q.id] || 0;
+    const pct = (avg / 5) * 100;
+    html += `<div class="avg-row">
+      <div class="avg-label">${escapeHtml(q.text)}</div>
+      <div class="avg-bar-bg"><div class="avg-bar-fill" style="width:${pct}%"></div></div>
+      <div class="avg-num">${avg.toFixed(1)}</div>
+    </div>`;
+  });
+
+  const colors = ['#FBEFD9', '#F6E4DC', '#E7EEE2'];
+  html += '<div class="postit-wrap">';
+  result.comments.forEach((c, i) => {
+    const rot = (i % 2 === 0 ? -3 : 3) + (i % 3);
+    const bg = colors[i % colors.length];
+    html += `<div class="postit" style="background:${bg};--r:${rot}deg">
+      <div>${escapeHtml(c.comment)}</div>
+      <div class="from">- ${escapeHtml(c.evaluator)}</div>
+    </div>`;
+  });
+  html += '</div>';
+  return html;
+}
+
+function starString(avg) {
+  const full = Math.round(avg);
+  let s = '';
+  for (let i = 1; i <= 5; i++) s += (i <= full ? '★' : '☆');
+  return s;
+}
+
+/* ===================== 동료 평가: 담벼락 ===================== */
+function openEvalWall() {
+  if (!requireCurrentProject_()) return;
+  setProjTag_('evalWallProjTag', currentProject);
+  go('eval-wall');
+  document.getElementById('evalWallArea').innerHTML = '<div class="loading">불러오는 중...</div>';
+  loadEvalWall();
+  // 진행중 프로젝트만 자동 새로고침 (종료된 프로젝트는 바뀔 일이 없음)
+  if (isActiveProject_(currentProject)) startWallPolling();
+}
+
+function startWallPolling() {
+  stopWallPolling();
+  wallPollTimer = setInterval(() => loadEvalWall(true), 6000);
+}
+function stopWallPolling() {
+  if (wallPollTimer) { clearInterval(wallPollTimer); wallPollTimer = null; }
+}
+
+function loadEvalWall(silent) {
+  if (!currentProject) return;
+  const area = document.getElementById('evalWallArea');
+  if (!silent || !area.innerHTML.trim()) area.innerHTML = '<div class="loading">불러오는 중...</div>';
+  google.script.run
+    .withSuccessHandler(renderEvalWall)
+    .withFailureHandler(err => {
+      if (area.innerHTML.includes('loading')) {
+        area.innerHTML = '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+      } else {
+        console.error('담벼락 새로고침 실패:', err);
+      }
+    })
+    .getSubmissionsForEvaluation(loggedInStudent, currentProject.id);
+}
+
+const WALL_COLORS = ['#FBEFD9', '#F6E4DC', '#E7EEE2'];
+
+function renderEvalWall(res) {
+  currentEvalQuestions = res.questions || [];
+  currentEvalReadonly = !res.projectActive;
+  if (currentEvalReadonly) stopWallPolling();
+  const list = res.list || [];
+  const notice = currentEvalReadonly
+    ? '<div class="hint">📚 종료된 프로젝트예요. 친구들의 산출물을 눌러서 구경할 수 있어요. (평가는 할 수 없어요)</div>'
+    : '';
+  if (list.length === 0) {
+    document.getElementById('evalWallArea').innerHTML = notice +
+      (currentEvalReadonly
+        ? '<div class="wall-empty">이 프로젝트에 등록된 친구의 산출물이 없어요.</div>'
+        : '<div class="wall-empty">아직 등록된 친구의 산출물이 없습니다.<br>잠시 후 다시 확인해보세요!</div>');
+    return;
+  }
+  let html = notice + '<div class="wall">';
+  list.forEach((item, i) => {
+    const rot = ((i % 2 === 0) ? -4 : 4) + (i % 3) - 1;
+    const bg = WALL_COLORS[i % WALL_COLORS.length];
+    html += `<div class="wall-tile" style="background:${bg};--r:${rot}deg" onclick='openEvalForm(${JSON.stringify(item).replace(/'/g,"&#39;")})'>
+      ${item.evaluated ? '<div class="wt-badge">✅</div>' : ''}
+      <div class="wt-name">${escapeHtml(item.name)}</div>
+      <div class="wt-title">${escapeHtml(item.title)}</div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('evalWallArea').innerHTML = html;
+}
+
+let currentEvalItem = null;
+
+function openEvalForm(item) {
+  stopWallPolling();
+  currentEvalItem = item;
+  document.getElementById('evalFormOwner').textContent = item.name + '의 산출물';
+  document.getElementById('evalFormTitle').textContent = item.title;
+  document.getElementById('evalFormDesc').textContent = item.desc || '';
+  document.getElementById('evalFormMediaArea').innerHTML = renderMediaRowHtml(item.imageUrl, item.url);
+
+  const readonly = currentEvalReadonly;
+  document.getElementById('evalReadonlyNotice').innerHTML = readonly
+    ? '<div class="hint">📚 종료된 프로젝트라 평가는 더 이상 할 수 없어요.' + (item.evaluated ? ' 아래는 내가 남겼던 평가예요.' : '') + '</div>'
+    : '';
+  document.getElementById('evalInputBox').style.display = (readonly && !item.evaluated) ? 'none' : 'block';
+  document.getElementById('evalCommentLabel').textContent = readonly ? '💬 내가 남긴 코멘트' : '💬 코멘트 (필수)';
+  document.getElementById('evalCommentHint').style.display = readonly ? 'none' : 'block';
+  document.getElementById('frameBtns').style.display = readonly ? 'none' : 'flex';
+  document.getElementById('evalSubmitBtn').style.display = readonly ? 'none' : 'inline-block';
+  document.getElementById('evalComment').disabled = readonly;
+
+  selectedStars = {};
+  currentEvalQuestions.forEach(q => {
+    selectedStars[q.id] = item.evaluated ? Number(item.myScores[q.id]) || 0 : 0;
+  });
+
+  const qArea = document.getElementById('evalQuestions');
+  qArea.innerHTML = currentEvalQuestions.map(q => `
+    <div class="qlabel">${escapeHtml(q.text)}</div>
+    <div class="star-row${readonly ? ' readonly' : ''}" id="stars-${q.id}">
+      ${[1,2,3,4,5].map(n => `<span class="star" data-q="${q.id}" data-n="${n}" onclick="setStar('${q.id}',${n})">★</span>`).join('')}
+    </div>
+  `).join('');
+
+  currentEvalQuestions.forEach(q => renderStars(q.id));
+  document.getElementById('evalComment').value = item.evaluated ? (item.myComment || '') : '';
+  document.getElementById('evalFormMsg').innerHTML = '';
+  go('eval-form');
+}
+
+/* ===================== 코멘트 문장틀 ===================== */
+const COMMENT_FRAMES = {
+  good:  '👍 좋았던 점: (  )이(가) 특히 좋았어. 왜냐하면 (  ) ',
+  idea:  '💡 제안: (  )을(를) (  )(으)로 바꾸면 더 좋을 것 같아. ',
+  ask:   '❓ 궁금한 점: (  )은(는) 어떻게 만들었는지 궁금해. ',
+  learn: '📚 배운 점: (  ) 방법을 나도 다음에 써보고 싶어. '
+};
+
+function insertFrame(kind) {
+  if (currentEvalReadonly) return;
+  const ta = document.getElementById('evalComment');
+  const frame = COMMENT_FRAMES[kind];
+  if (!ta || !frame) return;
+  let text = ta.value;
+  if (text && !/\n$/.test(text)) text += '\n';
+  ta.value = text + frame;
+  ta.focus();
+  // 첫 번째 "(  )" 안에 커서를 둬서 바로 이어 쓸 수 있게
+  const start = text.length + frame.indexOf('(  )');
+  if (start >= text.length) { try { ta.setSelectionRange(start + 1, start + 3); } catch (e) {} }
+}
+
+function setStar(qid, n) {
+  if (currentEvalReadonly) return;
+  selectedStars[qid] = n;
+  renderStars(qid);
+}
+
+function renderStars(qid) {
+  const row = document.getElementById('stars-' + qid);
+  if (!row) return;
+  const val = selectedStars[qid] || 0;
+  row.querySelectorAll('.star').forEach(s => {
+    const n = Number(s.dataset.n);
+    s.classList.toggle('on', n <= val);
+  });
+}
+
+function doSubmitEvaluation() {
+  if (currentEvalReadonly) return;
+  for (const q of currentEvalQuestions) {
+    if (!selectedStars[q.id]) {
+      setMsg('evalFormMsg', '모든 문항에 별점을 매겨주세요.', 'error');
+      return;
+    }
+  }
+  const comment = document.getElementById('evalComment').value.trim();
+  if (!comment) {
+    setMsg('evalFormMsg', '친구에게 힘이 되는 칭찬의 말을 코멘트로 남겨주세요.', 'error');
+    return;
+  }
+  if (/\(\s*\)/.test(comment)) {
+    setMsg('evalFormMsg', '빈 괄호 (  ) 안을 채워주세요. 쓰지 않을 문장은 지워도 돼요.', 'error');
+    return;
+  }
+  setMsg('evalFormMsg', '제출 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) openEvalWall();
+      else setMsg('evalFormMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('evalFormMsg'))
+    .submitEvaluation(currentEvalItem.submissionId, loggedInStudent, selectedStars, comment);
+}
+
+/* ===================== 교사용: 로그인 & 대시보드 ===================== */
+function doTeacherLogin() {
+  const email = document.getElementById('teacherEmailInput').value.trim();
+  const pw = document.getElementById('teacherPwInput').value;
+  if (!email || !pw) { setMsg('teacherLoginMsg', '이메일과 비밀번호를 입력해주세요.', 'error'); return; }
+  setMsg('teacherLoginMsg', '확인 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        teacherPw = 'firebase'; // 교사 로그인 표시 (실제 확인은 Firebase 로그인으로)
+        document.getElementById('teacherPwInput').value = '';
+        teacherSelectedProjectId = null;
+        studentManageList = [];
+        pwVisible = false;
+        document.getElementById('pwToggleBtn').textContent = '👁 비밀번호 보기';
+        teacherTab = 'projects';
+        ['projects', 'students'].forEach(t => {
+          document.getElementById('tabBtn-' + t).classList.toggle('active', t === 'projects');
+          document.getElementById('tabPanel-' + t).classList.toggle('active', t === 'projects');
+        });
+        setMsg('teacherLoginMsg', '', '');
+        loadTeacherOverview();
+      } else {
+        setMsg('teacherLoginMsg', res.message || '로그인에 실패했습니다.', 'error');
+      }
+    })
+    .withFailureHandler(serverError_('teacherLoginMsg'))
+    .teacherSignIn(email, pw);
+}
+
+// preferId: 목록을 다시 불러온 뒤 선택해둘 프로젝트 (생략하면 지금 선택 유지)
+function loadTeacherOverview(preferId) {
+  go('teacher-dashboard');
+  loadTeacherProjectPanel(preferId);
+  startTeacherPolling();
+}
+
+function backToTeacherDashboard() {
+  go('teacher-dashboard');
+  startTeacherPolling();
+}
+
+function startTeacherPolling() {
+  stopTeacherPolling();
+  teacherPollTimer = setInterval(() => {
+    if (!document.hidden && teacherTab === 'projects') loadTeacherStudentTable(true);
+  }, 30000);
+}
+
+/* ---- 대시보드 탭 전환 ---- */
+function switchTeacherTab(tab) {
+  teacherTab = tab;
+  ['projects', 'students'].forEach(t => {
+    document.getElementById('tabBtn-' + t).classList.toggle('active', t === tab);
+    document.getElementById('tabPanel-' + t).classList.toggle('active', t === tab);
+  });
+  if (tab === 'students') loadStudentManage();
+  else loadTeacherStudentTable(true);
+}
+
+/* ===================== 교사: 학생 관리 탭 ===================== */
+function loadStudentManage() {
+  const area = document.getElementById('studentManageArea');
+  if (!studentManageList.length) area.innerHTML = '<div class="loading">불러오는 중...</div>';
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res.success) { area.innerHTML = '<div class="msg error">' + escapeHtml(res.message || '불러오기 실패') + '</div>'; return; }
+      studentManageList = res.list;
+      renderStudentManage();
+    })
+    .withFailureHandler(err => { area.innerHTML = '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>'; })
+    .teacherListStudents(teacherPw);
+}
+
+function renderStudentManage() {
+  const area = document.getElementById('studentManageArea');
+  if (!studentManageList.length) { area.innerHTML = '<div class="msg">등록된 학생이 없어요.</div>'; return; }
+  let html = `<table class="tt"><tr>
+    <th class="tt-num">번호</th><th style="width:110px">이름</th><th style="width:150px">비밀번호</th><th>관리</th></tr>`;
+  studentManageList.forEach((s, i) => {
+    const pwText = pwVisible ? escapeHtml(s.password) : '••••';
+    const note = s.isDefault
+      ? '<span class="pw-note">처음 비밀번호</span>'
+      : '<span class="pw-note changed">변경됨</span>';
+    html += `<tr>
+      <td class="tt-num">${s.number}</td>
+      <td style="text-align:center">${escapeHtml(s.name)}</td>
+      <td style="text-align:center"><span class="pw-cell">${pwText}</span> ${note}</td>
+      <td style="text-align:center">
+        <button class="btn-plain btn-gray btn-sm" onclick="manageResetPw(${i})">초기화</button>
+        <button class="btn-plain btn-outline btn-sm" onclick="manageSetPw(${i})">직접 변경</button>
+      </td>
+    </tr>`;
+  });
+  html += '</table>';
+  area.innerHTML = html;
+}
+
+function togglePwVisible() {
+  pwVisible = !pwVisible;
+  document.getElementById('pwToggleBtn').textContent = pwVisible ? '🙈 비밀번호 숨기기' : '👁 비밀번호 보기';
+  renderStudentManage();
+}
+
+function manageResetPw(i) {
+  const s = studentManageList[i];
+  if (!s) return;
+  if (!confirm(s.name + ' 학생의 비밀번호를 처음 비밀번호(63+번호)로 초기화할까요?')) return;
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) { alert(s.name + ' 학생의 비밀번호가 ' + res.password + '(으)로 초기화되었어요.'); loadStudentManage(); }
+      else alert(res.message);
+    })
+    .withFailureHandler(err => alert('오류: ' + err.message))
+    .teacherResetStudentPassword(teacherPw, s.name);
+}
+
+// 전체 학생 비밀번호를 처음 비밀번호(63+번호)로 되돌린다 ("초기화"를 직접 입력해야 진행)
+function manageResetAllPw() {
+  const changed = studentManageList.filter(s => !s.isDefault).length;
+  const msg = '전체 학생 ' + studentManageList.length + '명의 비밀번호를 처음 비밀번호(63+번호)로 초기화할까요?\n'
+    + (changed ? '지금 비밀번호를 바꾼 학생 ' + changed + '명도 모두 처음 비밀번호로 돌아가요.\n' : '')
+    + '산출물과 평가 기록은 그대로예요.\n\n정말 진행하려면 아래 칸에 "초기화"라고 입력해주세요.';
+  const typed = prompt(msg, '');
+  if (typed === null) return;
+  if (typed.trim() !== '초기화') { alert('"초기화"라고 정확히 입력해야 진행돼요. 초기화하지 않았어요.'); return; }
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) { alert('학생 ' + res.count + '명의 비밀번호를 처음 비밀번호로 초기화했어요.'); loadStudentManage(); }
+      else alert(res.message);
+    })
+    .withFailureHandler(err => alert('오류: ' + err.message))
+    .teacherResetAllPasswords(teacherPw, typed.trim());
+}
+
+function toggleRosterBox() {
+  const box = document.getElementById('rosterBox');
+  const open = box.style.display === 'none';
+  box.style.display = open ? 'block' : 'none';
+  if (open && !document.getElementById('rosterText').value.trim() && studentManageList.length) {
+    document.getElementById('rosterText').value = studentManageList.map(s => s.number + ' ' + s.name).join('\n');
+  }
+}
+
+function saveRoster() {
+  const lines = document.getElementById('rosterText').value.split('\n');
+  setMsg('rosterMsg', '저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) { setMsg('rosterMsg', '학생 ' + res.count + '명 명단을 저장했어요.', 'success'); loadStudentManage(); refreshInit_(); }
+      else setMsg('rosterMsg', res.message, 'error');
+    })
+    .withFailureHandler(serverError_('rosterMsg'))
+    .teacherSaveRoster(teacherPw, lines);
+}
+
+function toggleImportBox() {
+  const box = document.getElementById('importBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+}
+
+async function importLegacy() {
+  const url = document.getElementById('importUrl').value.trim();
+  if (!/^https:\/\/script\.google\.com\//.test(url)) { setMsg('importMsg', '앱스 스크립트 내보내기 주소를 넣어주세요.', 'error'); return; }
+  if (!confirm('예전 앱의 기록을 새 앱으로 가져올까요?\n(학생 명단과 비밀번호도 예전 것으로 맞춰져요)')) return;
+  setMsg('importMsg', '예전 앱에서 기록을 받아오는 중... (10~30초)', '');
+  try {
+    const res = await fetch(url, { redirect: 'follow' });
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); } catch (e) { throw new Error('받아온 내용이 올바르지 않아요. 주소를 확인해주세요.'); }
+    if (!data || !data.sheets) throw new Error(data && data.error ? data.error : '받아온 내용에 기록이 없어요.');
+    const api = await window.__apiReady;
+    const r = await api.teacherImportLegacy(teacherPw, data, m => setMsg('importMsg', m, ''));
+    setMsg('importMsg', `가져오기 완료! 학생 ${r.students}명, 프로젝트 ${r.projects}개, 산출물 ${r.submissions}건, 평가 ${r.evaluations}건, 돌아보기 ${r.reflections}건`, 'success');
+    loadStudentManage(); refreshInit_();
+  } catch (e) {
+    console.error(e);
+    setMsg('importMsg', '가져오기 실패: ' + (e.message || e), 'error');
+  }
+}
+
+function manageSetPw(i) {
+  const s = studentManageList[i];
+  if (!s) return;
+  const v = prompt(s.name + ' 학생의 새 비밀번호를 입력해주세요. (숫자 4자리)', '');
+  if (v === null) return;
+  const pw = v.trim();
+  if (!/^\d{4}$/.test(pw)) { alert('숫자 4자리로 입력해주세요.'); return; }
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) { alert(s.name + ' 학생의 비밀번호를 ' + res.password + '(으)로 바꿨어요.'); loadStudentManage(); }
+      else alert(res.message);
+    })
+    .withFailureHandler(err => alert('오류: ' + err.message))
+    .teacherSetStudentPassword(teacherPw, s.name, pw);
+}
+function stopTeacherPolling() {
+  if (teacherPollTimer) { clearInterval(teacherPollTimer); teacherPollTimer = null; }
+}
+
+/* ---- 프로젝트 선택 & 카드 ---- */
+function loadTeacherProjectPanel(preferId) {
+  document.getElementById('teacherProjectCard').innerHTML = '<div class="loading">불러오는 중...</div>';
+  google.script.run
+    .withSuccessHandler(res => {
+      try { onProjectListLoaded(res, preferId || teacherSelectedProjectId); }
+      catch (e) {
+        document.getElementById('teacherProjectCard').innerHTML =
+          '<div class="msg error">화면 표시 중 오류: ' + escapeHtml(e.message) + '</div>';
+      }
+    })
+    .withFailureHandler(err => {
+      document.getElementById('teacherProjectCard').innerHTML =
+        '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+    })
+    .teacherListProjects(teacherPw);
+}
+
+function onProjectListLoaded(res, preferId) {
+  if (!res.success) {
+    document.getElementById('teacherProjectCard').innerHTML =
+      '<div class="msg error">' + escapeHtml(res.message || '인증 오류. 다시 로그인해주세요.') + '</div>';
+    return;
+  }
+  teacherProjectsCache = res.list; // 최신순
+  const sel = document.getElementById('teacherProjectSelect');
+  sel.innerHTML = teacherProjectsCache.map(p =>
+    `<option value="${p.id}">${isActiveProject_(p) ? '🟢' : '⚪'} ${p.seq}번째 · ${escapeHtml(p.title)}</option>`
+  ).join('');
+
+  let pick = preferId ? teacherProjectsCache.find(p => p.id === preferId) : null;
+  if (!pick) pick = teacherProjectsCache.find(p => isActiveProject_(p)) || teacherProjectsCache[0] || null;
+  teacherSelectedProjectId = pick ? pick.id : null;
+  sel.value = teacherSelectedProjectId || '';
+  renderTeacherProjectCard();
+  loadTeacherStudentTable();
+}
+
+function onTeacherProjectSelectChange() {
+  teacherSelectedProjectId = document.getElementById('teacherProjectSelect').value;
+  renderTeacherProjectCard();
+  loadTeacherStudentTable();
+}
+
+function renderTeacherProjectCard() {
+  const area = document.getElementById('teacherProjectCard');
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  if (!p) {
+    area.innerHTML = '<div class="msg">아직 만들어진 프로젝트가 없습니다.</div>' +
+      '<button class="btn-plain btn-secondary" onclick="startNewProject()">🆕 새 프로젝트 시작하기</button>';
+    return;
+  }
+  const isActive = isActiveProject_(p);
+  const activeCount = teacherProjectsCache.filter(x => isActiveProject_(x)).length;
+  let html = `
+    <div class="proj-tag${isActive ? '' : ' ended'}">${escapeHtml(projectTagText_(p))}</div>
+    <div style="font-size:19px;font-weight:bold;margin:4px 0">${escapeHtml(p.title)}</div>
+    <div style="color:var(--ink-soft);margin-bottom:8px">${escapeHtml(p.desc || '')}</div>
+    <div style="font-size:13px;color:var(--ink-faint)">시작일: ${escapeHtml(p.startedAt)} · 등록 ${p.submissionCount}건 · 현재 진행중인 프로젝트 ${activeCount}개</div>`;
+  if (!isActive) {
+    html += `<div class="hint" style="margin:10px 0 0">📚 종료된 프로젝트예요. 학생들은 산출물과 평가를 볼 수만 있어요. 필요하면 다시 진행할 수 있어요.</div>`;
+  }
+  html += `<div style="margin-top:10px;">
+    <button class="btn-plain btn-outline" onclick="openEditProject()">${p.mode === '모둠' ? '✏️ 프로젝트 수정·모둠 배정' : '✏️ 제목/소개 수정'}</button>
+    ${isActive
+      ? `<button class="btn-plain btn-danger-outline" onclick="setProjectStatus('종료')">⏹ 프로젝트 종료하기</button>`
+      : `<button class="btn-plain btn-outline" onclick="setProjectStatus('진행중')">▶ 다시 진행하기</button>`}
+    <button class="btn-plain btn-secondary" onclick="startNewProject()">🆕 새 프로젝트 시작하기</button>
+  </div>
+  <div style="margin-top:14px;padding-top:10px;border-top:1px dashed var(--border);text-align:right">
+    <button class="btn-plain btn-danger-outline btn-sm" onclick="deleteSelectedProject()">🗑 이 프로젝트 삭제</button>
+  </div>`;
+  area.innerHTML = html;
+}
+
+// 잘못 만든 프로젝트를 완전히 지운다 (되돌릴 수 없음 → "삭제"를 직접 입력해야 진행)
+function deleteSelectedProject() {
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  if (!p) return;
+  const warn = `[${p.seq}번째 · ${p.title}] 프로젝트를 삭제할까요?\n\n`
+    + `이 프로젝트의 평가 문항, 모둠 구성, 산출물 ${p.submissionCount}건(사진 포함), 받은 평가가 모두 지워져요.\n`
+    + `되돌릴 수 없어요. 기록을 남겨두고 싶다면 삭제 대신 "프로젝트 종료하기"를 써주세요.\n\n`
+    + `정말 삭제하려면 아래 칸에 "삭제"라고 입력해주세요.`;
+  const typed = prompt(warn, '');
+  if (typed === null) return;
+  if (typed.trim() !== '삭제') { alert('"삭제"라고 정확히 입력해야 삭제돼요. 삭제하지 않았어요.'); return; }
+
+  document.getElementById('teacherProjectCard').innerHTML = '<div class="loading">삭제하는 중...</div>';
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        alert(`"${res.title}" 프로젝트를 삭제했어요.\n(산출물 ${res.submissionCount}건, 평가 ${res.evaluationCount}건 삭제)\n남은 프로젝트의 순번은 다시 매겨져요.`);
+        teacherSelectedProjectId = null;
+        refreshInit_();
+      } else {
+        alert(res.message);
+      }
+      loadTeacherProjectPanel();
+    })
+    .withFailureHandler(err => { alert('오류: ' + err.message); loadTeacherProjectPanel(); })
+    .teacherDeleteProject(teacherPw, p.id, typed.trim());
+}
+
+function setProjectStatus(status) {
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  if (!p) return;
+  const msg = status === '종료'
+    ? `"${p.title}" 프로젝트를 종료할까요?\n\n종료하면 학생들은 산출물 등록·수정·평가를 할 수 없고, 산출물과 받은 평가를 볼 수만 있어요.\n(언제든 "다시 진행하기"로 되돌릴 수 있어요)`
+    : `"${p.title}" 프로젝트를 다시 진행할까요?\n\n학생들이 다시 산출물을 등록·수정하고 평가할 수 있어요.`;
+  if (!confirm(msg)) return;
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) { loadTeacherProjectPanel(p.id); refreshInit_(); }
+      else alert(res.message);
+    })
+    .withFailureHandler(err => alert('오류: ' + err.message))
+    .teacherSetProjectStatus(teacherPw, p.id, status);
+}
+
+/* ===================== 모둠 배정 보드 (드래그앤드롭 + 태블릿용 탭 배정) ===================== */
+const GROUP_MIN = 2, GROUP_MAX = 6;
+const boards = {}; // key('new' | 'edit') -> { el, groups:[{groupId,groupName,members,locked}], pool:[], selected, editMode, students }
+
+function initBoard(key, containerId, groups, students, editMode) {
+  const el = document.getElementById(containerId);
+  const known = (students || []).slice();
+  const taken = {};
+  const gs = (groups || []).map((g, i) => {
+    const members = (g.members || []).filter(m => known.indexOf(m) !== -1 && !taken[m]);
+    members.forEach(m => { taken[m] = true; });
+    return { groupId: g.groupId || '', groupName: g.groupName || ((i + 1) + '모둠'), members, locked: !!g.hasSubmission };
+  });
+  boards[key] = { el, groups: gs, pool: known.filter(n => !taken[n]), selected: null, editMode: !!editMode, students: known };
+  bindBoardEvents_(key);
+  renderBoard(key);
+}
+
+function makeEmptyGroups_(count) {
+  const out = [];
+  for (let i = 0; i < count; i++) out.push({ groupId: '', groupName: (i + 1) + '모둠', members: [] });
+  return out;
+}
+
+function bindBoardEvents_(key) {
+  const el = boards[key].el;
+  el.dataset.boardKey = key;
+  if (el.dataset.bound) return; // 이벤트는 한 번만 연결 (화면은 innerHTML로 다시 그려도 됨)
+  el.dataset.bound = '1';
+  const bk = () => el.dataset.boardKey;
+
+  el.addEventListener('dragstart', e => {
+    const chip = e.target.closest && e.target.closest('.chip');
+    if (!chip) return;
+    e.dataTransfer.setData('text/plain', chip.dataset.name);
+    e.dataTransfer.effectAllowed = 'move';
+    chip.classList.add('dragging');
+  });
+  el.addEventListener('dragend', () => {
+    el.querySelectorAll('.dragging').forEach(c => c.classList.remove('dragging'));
+    el.querySelectorAll('.over').forEach(z => z.classList.remove('over'));
+  });
+  el.addEventListener('dragover', e => {
+    const z = e.target.closest && e.target.closest('.drop-zone');
+    if (!z) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    if (!z.classList.contains('over')) {
+      el.querySelectorAll('.over').forEach(x => x.classList.remove('over'));
+      z.classList.add('over');
+    }
+  });
+  el.addEventListener('dragleave', e => {
+    const z = e.target.closest && e.target.closest('.drop-zone');
+    if (z && !z.contains(e.relatedTarget)) z.classList.remove('over');
+  });
+  el.addEventListener('drop', e => {
+    const z = e.target.closest && e.target.closest('.drop-zone');
+    if (!z) return;
+    e.preventDefault();
+    const name = e.dataTransfer.getData('text/plain');
+    if (name) moveStudent_(bk(), name, Number(z.dataset.target));
+  });
+  // 태블릿: 이름을 눌러 고르고 → 모둠 칸을 눌러 옮기기
+  el.addEventListener('click', e => {
+    const b = boards[bk()];
+    if (!b || e.target.closest('input, button')) return;
+    const chip = e.target.closest('.chip');
+    if (chip) {
+      b.selected = (b.selected === chip.dataset.name) ? null : chip.dataset.name;
+      renderBoard(bk());
+      return;
+    }
+    const z = e.target.closest('.drop-zone');
+    if (z && b.selected) moveStudent_(bk(), b.selected, Number(z.dataset.target));
+  });
+  el.addEventListener('input', e => {
+    const inp = e.target.closest && e.target.closest('input[data-gidx]');
+    if (!inp) return;
+    const g = boards[bk()].groups[Number(inp.dataset.gidx)];
+    if (g) g.groupName = inp.value;
+  });
+}
+
+function sortByRoster_(b, arr) {
+  return arr.sort((x, y) => b.students.indexOf(x) - b.students.indexOf(y));
+}
+
+function moveStudent_(key, name, target) {
+  const b = boards[key];
+  if (!b) return;
+  b.pool = b.pool.filter(n => n !== name);
+  b.groups.forEach(g => { g.members = g.members.filter(n => n !== name); });
+  if (target === -1 || !b.groups[target]) b.pool = sortByRoster_(b, b.pool.concat([name]));
+  else b.groups[target].members.push(name);
+  b.selected = null;
+  renderBoard(key);
+}
+
+function renderBoard(key) {
+  const b = boards[key];
+  const chip = n => `<span class="chip${b.selected === n ? ' selected' : ''}" draggable="true" data-name="${escapeHtml(n)}">${escapeHtml(n)}</span>`;
+  const selInfo = b.selected
+    ? ` · <span style="color:var(--terracotta-deep)">「${escapeHtml(b.selected)}」 선택됨 → 옮길 모둠 칸을 눌러주세요</span>` : '';
+  let html = `<div class="gpool drop-zone" data-target="-1">
+    <div class="gpool-title">🙋 미배정 학생 <b>${b.pool.length}</b>명${selInfo}</div>
+    <div class="chips">${b.pool.map(chip).join('') || '<span class="gempty">모든 학생이 배정됐어요 🎉</span>'}</div>
+  </div>`;
+  html += '<div class="ggrid">';
+  b.groups.forEach((g, i) => {
+    const n = g.members.length;
+    const warn = (n > 0 && n < GROUP_MIN) || n > GROUP_MAX;
+    const tail = b.editMode
+      ? (g.locked
+          ? '<span title="산출물을 등록한 모둠이라 삭제할 수 없어요">🔒</span>'
+          : `<button type="button" class="gdel" onclick="removeBoardGroup('${key}',${i})" title="모둠 삭제">✕</button>`)
+      : '';
+    html += `<div class="gcol drop-zone" data-target="${i}">
+      <div class="gcol-head">
+        <input type="text" data-gidx="${i}" value="${escapeHtml(g.groupName)}" placeholder="${i + 1}모둠">
+        <span class="gcount${warn ? ' warn' : ''}" title="모둠당 ${GROUP_MIN}~${GROUP_MAX}명을 권장해요">${n}명</span>
+        ${tail}
+      </div>
+      <div class="chips">${g.members.map(chip).join('') || '<span class="gempty">여기로 끌어오세요</span>'}</div>
+    </div>`;
+  });
+  html += '</div>';
+  if (b.editMode) html += `<button type="button" class="btn-plain btn-outline btn-sm" onclick="addBoardGroup('${key}')">+ 모둠 추가</button>`;
+  b.el.innerHTML = html;
+}
+
+function nextGroupName_(b) {
+  const used = b.groups.map(g => String(g.groupName).trim());
+  let k = b.groups.length + 1;
+  while (used.indexOf(k + '모둠') !== -1) k++;
+  return k + '모둠';
+}
+
+function addBoardGroup(key) {
+  const b = boards[key];
+  if (b.groups.length >= 12) { alert('모둠은 최대 12개까지 만들 수 있어요.'); return; }
+  b.groups.push({ groupId: '', groupName: nextGroupName_(b), members: [], locked: false });
+  renderBoard(key);
+}
+
+function removeBoardGroup(key, idx) {
+  const b = boards[key];
+  const g = b.groups[idx];
+  if (!g || g.locked) return;
+  if (g.members.length && !confirm(`${g.groupName}을(를) 삭제할까요? 구성원 ${g.members.length}명은 미배정으로 돌아가요.`)) return;
+  b.pool = sortByRoster_(b, b.pool.concat(g.members));
+  b.groups.splice(idx, 1);
+  b.selected = null;
+  renderBoard(key);
+}
+
+// 새 프로젝트: 모둠 개수를 바꾸면 칸을 늘리거나 줄인다 (줄어든 칸의 학생은 미배정으로)
+function setBoardGroupCount(key, count) {
+  const b = boards[key];
+  count = Math.max(1, Math.min(12, count));
+  if (count < b.groups.length) {
+    const removed = b.groups.slice(count);
+    const moving = removed.reduce((acc, g) => acc.concat(g.members), []);
+    if (moving.length && !confirm(`줄어드는 모둠에 배정된 학생 ${moving.length}명은 미배정으로 돌아가요. 계속할까요?`)) return false;
+    b.groups = b.groups.slice(0, count);
+    b.pool = sortByRoster_(b, b.pool.concat(moving));
+  } else {
+    for (let i = b.groups.length; i < count; i++) {
+      b.groups.push({ groupId: '', groupName: nextGroupName_(b), members: [], locked: false });
+    }
+  }
+  b.selected = null;
+  renderBoard(key);
+  return true;
+}
+
+function getBoardGroups(key) {
+  const b = boards[key];
+  if (!b) return [];
+  return b.groups.map((g, i) => ({
+    groupId: g.groupId || '',
+    groupName: String(g.groupName || '').trim() || ((i + 1) + '모둠'),
+    members: g.members.slice()
+  }));
+}
+
+// 보드 내용을 서버로 보내기 전에 확인 (인원 초과, 이름 중복)
+function checkBoardGroups_(groups) {
+  const over = groups.find(g => g.members.length > GROUP_MAX);
+  if (over) return over.groupName + '의 인원이 ' + GROUP_MAX + '명을 넘어요. (현재 ' + over.members.length + '명)';
+  const names = groups.map(g => g.groupName);
+  const dup = names.filter((v, i) => names.indexOf(v) !== i);
+  if (dup.length) return '모둠 이름이 겹쳐요: ' + [...new Set(dup)].join(', ');
+  return '';
+}
+
+/* ===================== 교사: 새 프로젝트 만들기 (+ 임시저장) ===================== */
+let pendingDraft = null;
+
+function resetNewProjectForm_() {
+  document.getElementById('newProjTitle').value = '';
+  document.getElementById('newProjDesc').value = '';
+  document.getElementById('newProjQuestions').innerHTML = '';
+  DEFAULT_QUESTION_SEED.forEach(t => addQuestionField(t));
+  document.getElementById('newProjMode').value = '개인';
+  document.getElementById('groupSetupArea').style.display = 'none';
+  document.getElementById('groupCountInput').value = 6;
+  document.getElementById('newGroupBoard').innerHTML = '';
+  delete boards['new'];
+  document.getElementById('newProjMsg').innerHTML = '';
+  document.getElementById('newProjDraftBanner').innerHTML = '';
+  pendingDraft = null;
+}
+
+function startNewProject() {
+  resetNewProjectForm_();
+  fillTemplateSelect_();
+  go('teacher-project-new');
+  checkProjectDraft_();
+}
+
+function onProjModeChange() {
+  const mode = document.getElementById('newProjMode').value;
+  document.getElementById('groupSetupArea').style.display = (mode === '모둠') ? 'block' : 'none';
+  if (mode === '모둠' && !boards['new']) {
+    const count = Math.max(1, Math.min(12, Number(document.getElementById('groupCountInput').value) || 6));
+    initBoard('new', 'newGroupBoard', makeEmptyGroups_(count), INIT.students || [], false);
+  }
+}
+
+function applyGroupCount() {
+  const input = document.getElementById('groupCountInput');
+  const count = Math.max(1, Math.min(12, Number(input.value) || 1));
+  input.value = count;
+  if (!boards['new']) {
+    initBoard('new', 'newGroupBoard', makeEmptyGroups_(count), INIT.students || [], false);
+    return;
+  }
+  if (!setBoardGroupCount('new', count)) input.value = boards['new'].groups.length;
+}
+
+/* ===================== 활동 유형별 평가 문항 ===================== */
+const QUESTION_TEMPLATES = [
+  { key: 'video', label: '🎬 영상 만들기 (뉴스·뮤직비디오·홍보 영상)', questions: [
+    '영상의 주제(전하려는 내용)가 잘 드러나나요?',
+    '장면 구성과 순서가 자연스럽고 이해하기 쉬운가요?',
+    '자막·소리·음악이 내용을 잘 도와주나요?',
+    '보는 사람이 끝까지 집중할 수 있게 창의적으로 만들었나요?'
+  ]},
+  { key: 'present', label: '🎤 발표 (PPT·프레젠테이션)', questions: [
+    '핵심 내용이 슬라이드에 잘 정리되어 있나요?',
+    '그림·도표 등 자료가 설명을 잘 도와주나요?',
+    '발표자가 청중을 보며 또렷하게 전달했나요?',
+    '내용이 정확하고 근거가 충분한가요?'
+  ]},
+  { key: 'writing', label: '✍️ 글쓰기 (논설문·설명문·생활문)', questions: [
+    '주제(주장)가 분명하게 드러나나요?',
+    '근거나 예시가 알맞고 설득력이 있나요?',
+    '문단이 자연스럽게 이어지고 짜임이 좋은가요?',
+    '맞춤법과 문장 표현이 바른가요?'
+  ]},
+  { key: 'coding', label: '💻 코딩 (앱·게임·프로그램)', questions: [
+    '프로그램이 오류 없이 잘 작동하나요?',
+    '아이디어가 창의적이고 쓸모가 있나요?',
+    '화면 구성이 보기 좋고 사용하기 편한가요?',
+    '만든 목적(해결하려는 문제)이 잘 드러나나요?'
+  ]},
+  { key: 'poster', label: '🖼️ 포스터·인포그래픽·카드뉴스', questions: [
+    '전하려는 메시지가 한눈에 들어오나요?',
+    '글과 그림의 배치·색이 보기 좋은가요?',
+    '정보가 정확하고 꼭 필요한 내용만 담았나요?',
+    '보는 사람의 관심을 끄는 창의적인 표현이 있나요?'
+  ]},
+  { key: 'inquiry', label: '🔬 탐구·실험 보고서', questions: [
+    '탐구 질문(문제)이 분명한가요?',
+    '실험·조사 과정이 알맞고 자세히 기록되어 있나요?',
+    '결과를 표나 그래프로 알기 쉽게 정리했나요?',
+    '결과에 맞는 결론과 새로 알게 된 점을 썼나요?'
+  ]},
+  { key: 'art', label: '🎨 미술·만들기 작품', questions: [
+    '작품의 주제와 표현 의도가 잘 드러나나요?',
+    '재료와 표현 방법을 알맞게 사용했나요?',
+    '자신만의 독창적인 생각이 담겨 있나요?',
+    '정성껏 꼼꼼하게 완성했나요?'
+  ]},
+  { key: 'perform', label: '🎭 공연 (노래·연극·춤)', questions: [
+    '공연의 주제와 분위기가 잘 전달되나요?',
+    '모둠원들이 서로 호흡을 맞춰 협력했나요?',
+    '목소리·몸짓 등 표현이 자신감 있고 또렷한가요?',
+    '관객의 관심을 끄는 창의적인 연출이 있나요?'
+  ]},
+  { key: 'book', label: '📖 책·그림책·신문 만들기', questions: [
+    '이야기(내용)의 흐름이 자연스럽고 재미있나요?',
+    '그림과 글이 서로 잘 어울리나요?',
+    '읽는 사람을 생각하며 알기 쉽게 만들었나요?',
+    '표지·제목 등 구성이 완성도 있게 갖춰져 있나요?'
+  ]},
+  { key: 'project', label: '🌱 프로젝트·캠페인 활동 (문제 해결)', questions: [
+    '해결하려는 문제를 잘 찾아 분명하게 제시했나요?',
+    '해결 방법이 실천 가능하고 알맞은가요?',
+    '조사한 자료와 근거가 충분한가요?',
+    '다른 사람들의 참여나 생각의 변화를 이끌 수 있나요?'
+  ]}
+];
+
+function fillTemplateSelect_() {
+  const sel = document.getElementById('questionTemplateSelect');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">📂 활동 유형으로 문항 불러오기…</option>' +
+    QUESTION_TEMPLATES.map(t => `<option value="${t.key}">${escapeHtml(t.label)}</option>`).join('');
+  sel.value = '';
+}
+
+function currentQuestionTexts_() {
+  return Array.from(document.querySelectorAll('#newProjQuestions input[type=text]')).map(i => i.value.trim()).filter(t => t);
+}
+
+function applyQuestionTemplate(key) {
+  const sel = document.getElementById('questionTemplateSelect');
+  const t = QUESTION_TEMPLATES.find(x => x.key === key);
+  if (!t) return;
+  const cur = currentQuestionTexts_();
+  const isDefault = cur.length === 0 || JSON.stringify(cur) === JSON.stringify(DEFAULT_QUESTION_SEED)
+    || QUESTION_TEMPLATES.some(x => JSON.stringify(x.questions) === JSON.stringify(cur));
+  if (!isDefault && !confirm('지금 적어둔 평가 문항을 "' + t.label + '" 문항으로 바꿀까요?')) {
+    sel.value = '';
+    return;
+  }
+  document.getElementById('newProjQuestions').innerHTML = '';
+  t.questions.forEach(q => addQuestionField(q));
+  sel.value = '';
+}
+
+let qFieldCount = 0;
+function addQuestionField(prefill) {
+  qFieldCount++;
+  const id = 'qf-' + qFieldCount;
+  const wrap = document.createElement('div');
+  wrap.className = 'qfield-row';
+  wrap.id = id;
+  wrap.innerHTML = `<input type="text" value="${escapeHtml(prefill || '')}" placeholder="문항 내용">
+    <button class="btn-plain btn-gray" style="padding:8px 12px" onclick="document.getElementById('${id}').remove()">✕</button>`;
+  document.getElementById('newProjQuestions').appendChild(wrap);
+}
+
+function collectNewProjectForm_() {
+  const mode = document.getElementById('newProjMode').value;
+  return {
+    title: document.getElementById('newProjTitle').value,
+    desc: document.getElementById('newProjDesc').value,
+    questions: Array.from(document.querySelectorAll('#newProjQuestions input[type=text]')).map(i => i.value),
+    mode: mode,
+    groups: (mode === '모둠' && boards['new']) ? getBoardGroups('new') : []
+  };
+}
+
+function saveProjectDraft() {
+  const d = collectNewProjectForm_();
+  setMsg('newProjMsg', '임시저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        setMsg('newProjMsg', '💾 임시저장했어요 (' + res.savedAt + '). 다음에 "새 프로젝트 시작하기"를 누르면 이어서 할 수 있어요.', 'success');
+        document.getElementById('newProjDraftBanner').innerHTML = '';
+        pendingDraft = null;
+      } else {
+        setMsg('newProjMsg', res.message || '임시저장 실패', 'error');
+      }
+    })
+    .withFailureHandler(serverError_('newProjMsg'))
+    .teacherSaveProjectDraft(teacherPw, d);
+}
+
+function checkProjectDraft_() {
+  const banner = document.getElementById('newProjDraftBanner');
+  banner.innerHTML = '';
+  google.script.run
+    .withSuccessHandler(res => {
+      if (!res || !res.success || !res.draft) return;
+      // 그 사이에 다른 화면으로 나갔다면 표시하지 않음
+      if (!document.getElementById('view-teacher-project-new').classList.contains('active')) return;
+      pendingDraft = res.draft;
+      banner.innerHTML = `<div class="hint" style="border-left-color:var(--terracotta)">
+        💾 임시저장된 프로젝트가 있어요: <b>${escapeHtml(res.draft.title || '(제목 없음)')}</b>
+        <span style="color:var(--ink-faint)">· ${escapeHtml(res.draft.savedAt || '')}</span>
+        <div style="margin-top:8px">
+          <button class="btn-plain btn-sm" onclick="loadProjectDraft_()">불러오기</button>
+          <button class="btn-plain btn-gray btn-sm" onclick="deleteProjectDraft_()">임시저장 삭제</button>
+        </div>
+      </div>`;
+    })
+    .teacherGetProjectDraft(teacherPw);
+}
+
+function loadProjectDraft_() {
+  const d = pendingDraft;
+  if (!d) return;
+  document.getElementById('newProjTitle').value = d.title || '';
+  document.getElementById('newProjDesc').value = d.desc || '';
+  document.getElementById('newProjQuestions').innerHTML = '';
+  const qs = (d.questions || []).filter(q => q !== null && q !== undefined);
+  (qs.length ? qs : DEFAULT_QUESTION_SEED).forEach(t => addQuestionField(t));
+
+  const mode = d.mode === '모둠' ? '모둠' : '개인';
+  document.getElementById('newProjMode').value = mode;
+  delete boards['new'];
+  document.getElementById('newGroupBoard').innerHTML = '';
+  if (mode === '모둠') {
+    document.getElementById('groupSetupArea').style.display = 'block';
+    const groups = (d.groups && d.groups.length) ? d.groups : makeEmptyGroups_(6);
+    document.getElementById('groupCountInput').value = groups.length;
+    initBoard('new', 'newGroupBoard', groups, INIT.students || [], false);
+  } else {
+    document.getElementById('groupSetupArea').style.display = 'none';
+  }
+  document.getElementById('newProjDraftBanner').innerHTML =
+    '<div class="msg success">임시저장한 내용을 불러왔어요. (' + escapeHtml(d.savedAt || '') + ')</div>';
+}
+
+function deleteProjectDraft_() {
+  if (!confirm('임시저장한 내용을 삭제할까요?')) return;
+  google.script.run
+    .withSuccessHandler(() => {
+      pendingDraft = null;
+      document.getElementById('newProjDraftBanner').innerHTML = '';
+    })
+    .withFailureHandler(err => alert('오류: ' + err.message))
+    .teacherDeleteProjectDraft(teacherPw);
+}
+
+function doCreateProject() {
+  const title = document.getElementById('newProjTitle').value.trim();
+  const desc = document.getElementById('newProjDesc').value.trim();
+  const inputs = document.querySelectorAll('#newProjQuestions input[type=text]');
+  const texts = Array.from(inputs).map(i => i.value.trim()).filter(t => t);
+  if (!title) { setMsg('newProjMsg', '프로젝트 제목을 입력해주세요.', 'error'); return; }
+  if (texts.length === 0) { setMsg('newProjMsg', '평가 문항을 1개 이상 입력해주세요.', 'error'); return; }
+
+  const mode = document.getElementById('newProjMode').value;
+  let groups = null;
+  let confirmMsg = '새 프로젝트를 시작할까요?\n(지금 진행 중인 프로젝트는 그대로 계속 진행돼요)';
+
+  if (mode === '모둠') {
+    if (!boards['new']) { setMsg('newProjMsg', '모둠 개수를 정해주세요.', 'error'); return; }
+    groups = getBoardGroups('new');
+    const err = checkBoardGroups_(groups);
+    if (err) { setMsg('newProjMsg', err, 'error'); return; }
+    const un = boards['new'].pool.length;
+    if (un > 0) {
+      confirmMsg = '새 프로젝트를 시작할까요?\n\n아직 모둠에 배정되지 않은 학생이 ' + un + '명 있어요.\n'
+        + '이 학생들은 나중에 대시보드의 "프로젝트 수정·모둠 배정"에서 배정할 수 있어요.\n'
+        + '(배정 전까지는 산출물을 등록할 수 없어요)';
+    }
+  }
+
+  if (!confirm(confirmMsg)) return;
+  setMsg('newProjMsg', '생성 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        alert('새 프로젝트가 시작되었습니다!' + (res.unassignedCount ? '\n(미배정 학생 ' + res.unassignedCount + '명은 "프로젝트 수정·모둠 배정"에서 배정해주세요)' : ''));
+        delete boards['new'];
+        refreshInit_();
+        loadTeacherOverview(res.projectId);
+      } else {
+        setMsg('newProjMsg', res.message, 'error');
+      }
+    })
+    .withFailureHandler(serverError_('newProjMsg'))
+    .teacherCreateProject(teacherPw, title, desc, texts, mode, groups);
+}
+
+/* ===================== 교사: 프로젝트 수정 (+ 모둠 배정) ===================== */
+function openEditProject() {
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  if (!p) { alert('선택된 프로젝트가 없습니다.'); return; }
+  document.getElementById('editProjTitle').value = p.title;
+  document.getElementById('editProjDesc').value = p.desc || '';
+  document.getElementById('editProjMsg').innerHTML = '';
+
+  const area = document.getElementById('editGroupArea');
+  const boardEl = document.getElementById('editGroupBoard');
+  delete boards['edit'];
+  if (p.mode === '모둠') {
+    area.style.display = 'block';
+    boardEl.innerHTML = '<div class="loading">모둠 정보를 불러오는 중...</div>';
+    const pid = p.id;
+    google.script.run
+      .withSuccessHandler(res => {
+        if (teacherSelectedProjectId !== pid) return;
+        if (!res.success) { boardEl.innerHTML = '<div class="msg error">' + escapeHtml(res.message || '불러오기 실패') + '</div>'; return; }
+        initBoard('edit', 'editGroupBoard', res.groups, res.students, true);
+      })
+      .withFailureHandler(err => {
+        boardEl.innerHTML = '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+      })
+      .teacherGetGroupSetup(teacherPw, pid);
+  } else {
+    area.style.display = 'none';
+    boardEl.innerHTML = '';
+  }
+  go('teacher-project-edit');
+}
+
+function doEditProject() {
+  const title = document.getElementById('editProjTitle').value.trim();
+  const desc = document.getElementById('editProjDesc').value.trim();
+  if (!title) { setMsg('editProjMsg', '제목을 입력해주세요.', 'error'); return; }
+
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  let groups = null;
+  if (p && p.mode === '모둠') {
+    if (!boards['edit']) { setMsg('editProjMsg', '모둠 정보를 아직 불러오는 중이에요. 잠시 후 다시 눌러주세요.', 'error'); return; }
+    groups = getBoardGroups('edit');
+    const err = checkBoardGroups_(groups);
+    if (err) { setMsg('editProjMsg', err, 'error'); return; }
+    if (groups.length === 0) { setMsg('editProjMsg', '모둠을 1개 이상 만들어주세요.', 'error'); return; }
+  }
+
+  setMsg('editProjMsg', '저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        delete boards['edit'];
+        loadTeacherOverview(teacherSelectedProjectId);
+      } else {
+        setMsg('editProjMsg', res.message, 'error');
+      }
+    })
+    .withFailureHandler(serverError_('editProjMsg'))
+    .teacherUpdateProject(teacherPw, teacherSelectedProjectId, title, desc, groups);
+}
+
+/* ---- 학생 현황 테이블 ---- */
+function loadTeacherStudentTable(silent) {
+  if (!teacherSelectedProjectId) {
+    document.getElementById('teacherOverviewArea').innerHTML = '';
+    return;
+  }
+  const area = document.getElementById('teacherOverviewArea');
+  if (!silent || !area.innerHTML.trim()) {
+    area.innerHTML = '<div class="loading">불러오는 중...</div>';
+    lastOverviewSig = ''; // 화면을 비웠으니 응답이 오면 반드시 다시 그리기
+    silent = false;
+  }
+  google.script.run
+    .withSuccessHandler(res => {
+      try { renderTeacherOverview(res); }
+      catch (e) {
+        if (!silent) {
+          area.innerHTML = '<div class="msg error">화면 표시 중 오류: ' + escapeHtml(e.message) + '</div>';
+        } else {
+          console.error('학생 현황 갱신 실패:', e);
+        }
+      }
+    })
+    .withFailureHandler(err => {
+      if (!silent) {
+        area.innerHTML = '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+      } else {
+        console.error('학생 현황 자동 새로고침 실패:', err);
+      }
+    })
+    .teacherGetOverview(teacherPw, teacherSelectedProjectId);
+}
+
+function renderTeacherOverview(res) {
+  if (!res.success) {
+    document.getElementById('teacherOverviewArea').innerHTML =
+      '<div class="msg error">' + escapeHtml(res.message || '인증 오류. 다시 로그인해주세요.') + '</div>';
+    return;
+  }
+  // 응답이 오기 전에 다른 프로젝트로 바꿨다면 늦게 도착한 응답은 무시
+  if (res.projectId && res.projectId !== teacherSelectedProjectId) return;
+  // 자동 새로고침 때 내용이 그대로면 다시 그리지 않음 (사진 깜빡임 방지)
+  const sig = JSON.stringify([res.projectId, res.mode, res.list, res.unassigned]);
+  if (sig === lastOverviewSig && document.getElementById('teacherOverviewArea').innerHTML.trim()) return;
+  lastOverviewSig = sig;
+  teacherOverviewList = res.list || [];
+  teacherOverviewMode = res.mode;
+  if (res.mode === '모둠') {
+    renderTeacherGroupTable(teacherOverviewList, res.unassigned || []);
+    return;
+  }
+
+  let html = `<table class="tt"><tr><th class="tt-num">번호</th><th class="tt-name">이름</th><th class="tt-status">등록여부</th><th>제목</th><th class="tt-count">받은<br>평가 수</th><th class="tt-score">받은<br>평점</th></tr>`;
+  teacherOverviewList.forEach((s, i) => {
+    const nameEsc = escapeHtml(s.name);
+    html += `<tr class="clickable" onclick="openTeacherDetailByIndex(${i})">
+      <td class="tt-num">${s.number}</td>
+      <td class="tt-name">${nameEsc}</td>
+      ${s.registered
+        ? `<td class="tt-status">등록완료</td>
+           <td class="tt-title">${escapeHtml(s.title)}</td>
+           <td class="tt-count">${s.receivedCount}</td>
+           ${scoreCellHtml_(s.avgScore)}`
+        : `<td class="tt-status" style="color:var(--danger)">미등록</td>
+           <td class="tt-title" style="color:var(--ink-faint)">눌러서 대신 등록하기</td>
+           <td class="tt-count">-</td><td class="tt-score">-</td>`}
+    </tr>`;
+  });
+  html += '</table>';
+  document.getElementById('teacherOverviewArea').innerHTML = html;
+}
+
+// 받은 평점 칸: 평균 점수 + 작은 별, 평가가 없으면 "-"
+function scoreCellHtml_(avg) {
+  if (avg === null || avg === undefined || isNaN(Number(avg))) {
+    return '<td class="tt-score" style="color:var(--ink-faint)">-</td>';
+  }
+  const v = Number(avg);
+  const low = v < 3 ? ' low' : '';
+  return `<td class="tt-score"><span class="score-num${low}">${v.toFixed(1)}</span><div class="score-stars">${starString(v)}</div></td>`;
+}
+
+/* ---- 모둠 모드 전용 산출물 현황(=모둠 현황) 테이블 ---- */
+function renderTeacherGroupTable(list, unassigned) {
+  let html = '';
+  if (unassigned && unassigned.length) {
+    html += `<div class="msg error">🙋 아직 모둠에 배정되지 않은 학생 ${unassigned.length}명: ${unassigned.map(n => escapeHtml(n)).join(', ')}
+      <div style="font-size:12px;margin-top:4px">위 카드의 "✏️ 프로젝트 수정·모둠 배정"에서 배정해주세요. 배정 전까지는 산출물을 등록할 수 없어요.</div></div>`;
+  }
+  if (!list.length) {
+    document.getElementById('teacherOverviewArea').innerHTML = html + '<div class="msg">아직 만들어진 모둠이 없어요.</div>';
+    return;
+  }
+  const doneCount = list.filter(g => g.registered).length;
+  html += `<div class="gb-summary">등록 <b>${doneCount}</b> / ${list.length}모둠</div>`;
+  html += '<div class="gboard">';
+  list.forEach((g, i) => {
+    const members = (g.members || []).map(m => escapeHtml(m)).join(', ') || '(구성원 없음)';
+    let photo;
+    if (g.registered && g.imageUrl) {
+      photo = `<img src="${escapeHtml(g.imageUrl)}" alt="${escapeHtml(g.groupName)} 산출물 사진" loading="lazy">`;
+    } else if (g.registered) {
+      photo = '<div class="gb-nophoto">📷<br>사진 없음</div>';
+    } else {
+      photo = '<div class="gb-nophoto">📝<br>아직 등록 전<br><span>눌러서 대신 등록</span></div>';
+    }
+    const score = (g.registered && g.avgScore !== null && g.avgScore !== undefined && !isNaN(Number(g.avgScore)))
+      ? `<span class="gb-score${Number(g.avgScore) < 3 ? ' low' : ''}">★ ${Number(g.avgScore).toFixed(1)}</span>`
+      : '<span class="gb-score none">★ -</span>';
+    html += `<div class="gb-card${g.registered ? '' : ' todo'}" onclick="openTeacherDetailByIndex(${i})" title="눌러서 자세히 보기">
+      <div class="gb-photo">${photo}<span class="gb-name">${escapeHtml(g.groupName)}</span></div>
+      <div class="gb-body">
+        <div class="gb-title">${g.registered ? escapeHtml(g.title) : '<span style="color:var(--danger)">미등록</span>'}</div>
+        <div class="gb-members">👥 ${members}</div>
+        <div class="gb-foot">
+          <span>평가 ${g.registered ? g.receivedCount : '-'}개</span>
+          ${score}
+        </div>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  document.getElementById('teacherOverviewArea').innerHTML = html;
+}
+
+/* ===================== 교사: 학생/모둠 상세 ===================== */
+function openTeacherDetailByIndex(i) {
+  const row = teacherOverviewList[i];
+  if (!row) return;
+  if (teacherOverviewMode === '모둠') {
+    teacherDetail = { type: 'group', groupId: row.groupId, groupName: row.groupName, members: row.members || [] };
+  } else {
+    teacherDetail = { type: 'individual', name: row.name, members: [row.name] };
+  }
+  go('teacher-student');
+  loadTeacherDetail_();
+}
+
+function teacherDetailLabel_() {
+  if (!teacherDetail) return '';
+  return teacherDetail.type === 'group' ? teacherDetail.groupName : teacherDetail.name + ' 학생';
+}
+
+function loadTeacherDetail_() {
+  const d = teacherDetail;
+  if (!d) return;
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  setProjTag_('tDetailProjTag', p);
+  document.getElementById('teacherStudentName').textContent = teacherDetailLabel_();
+  const mem = document.getElementById('tDetailMembers');
+  if (d.type === 'group') {
+    mem.textContent = '구성원: ' + (d.members.length ? d.members.join(', ') : '(없음)');
+    mem.style.display = 'block';
+  } else {
+    mem.style.display = 'none';
+  }
+  document.getElementById('teacherStudentSubmissionArea').innerHTML = '<div class="loading">불러오는 중...</div>';
+  document.getElementById('tDetailActions').innerHTML = '';
+  document.getElementById('tDetailResultSection').style.display = 'none';
+  document.getElementById('tDetailReflections').innerHTML = '';
+
+  const onOk = result => {
+    // 응답이 오기 전에 다른 학생/모둠으로 바꿨다면 무시
+    if (teacherDetail !== d) return;
+    try {
+      d.result = result;
+      renderTeacherDetail_();
+      const now = new Date();
+      document.getElementById('tDetailLoadedAt').textContent =
+        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' 기준';
+    } catch (e) {
+      document.getElementById('teacherStudentSubmissionArea').innerHTML =
+        '<div class="msg error">화면 표시 중 오류: ' + escapeHtml(e.message) + '</div>';
+    }
+  };
+  const onFail = err => {
+    document.getElementById('teacherStudentSubmissionArea').innerHTML =
+      '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>';
+  };
+  const run = google.script.run.withSuccessHandler(onOk).withFailureHandler(onFail);
+  if (d.type === 'group') run.teacherGetGroupResult(teacherPw, d.groupId, teacherSelectedProjectId);
+  else run.teacherGetStudentResult(teacherPw, d.name, teacherSelectedProjectId);
+}
+
+function renderTeacherDetail_() {
+  const d = teacherDetail;
+  const result = d.result || {};
+  const subArea = document.getElementById('teacherStudentSubmissionArea');
+  const actions = document.getElementById('tDetailActions');
+  const resultSection = document.getElementById('tDetailResultSection');
+  document.getElementById('tDetailReflections').innerHTML = renderReflectionListHtml_(result.reflections || [], d.type === 'group');
+
+  if (result.hasSubmission) {
+    subArea.innerHTML = renderSubmissionInfoHtml(result.submission);
+    actions.innerHTML = `
+      <button class="btn-plain" onclick="openTeacherSubEdit()">✏️ 산출물 수정하기</button>
+      <button class="btn-plain btn-danger-outline" onclick="resetTeacherDetailRecord()">🗑 이 프로젝트 기록 초기화</button>`;
+    document.getElementById('teacherStudentArea').innerHTML = renderResultsHtml(result);
+    resultSection.style.display = 'block';
+  } else {
+    subArea.innerHTML = `<div class="box"><div class="msg" style="margin:0">아직 등록한 산출물이 없어요.</div></div>`;
+    actions.innerHTML = `
+      <button class="btn-plain btn-secondary" onclick="openTeacherSubEdit()">📝 선생님이 대신 등록하기</button>
+      <button class="btn-plain btn-danger-outline" onclick="resetTeacherDetailRecord()">🗑 이 프로젝트 기록 초기화</button>`;
+    resultSection.style.display = 'none';
+  }
+}
+
+function renderReflectionListHtml_(list, isGroup) {
+  let html = '<h2 style="font-size:17px">🪞 피드백 돌아보기</h2><div class="box">';
+  if (!list.length) {
+    html += `<div class="msg" style="margin:0">아직 ${isGroup ? '모둠원 중 ' : ''}돌아보기를 쓰지 않았어요.</div>`;
+  } else {
+    list.forEach(r => {
+      html += `<div class="refl-item"><div class="who">${escapeHtml(r.name)}<span class="when">${escapeHtml(r.updatedAt)}</span></div>
+        <div class="txt">${escapeHtml(r.text)}</div></div>`;
+    });
+  }
+  return html + '</div>';
+}
+
+/* ===================== 교사: 돌아보기 모아보기 ===================== */
+function openReflectionsView() {
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  if (!p) { alert('선택된 프로젝트가 없습니다.'); return; }
+  setProjTag_('reflProjTag', p);
+  go('teacher-reflections');
+  loadReflectionsView();
+}
+
+function loadReflectionsView() {
+  const area = document.getElementById('reflListArea');
+  area.innerHTML = '<div class="loading">불러오는 중...</div>';
+  const pid = teacherSelectedProjectId;
+  google.script.run
+    .withSuccessHandler(res => {
+      if (pid !== teacherSelectedProjectId) return;
+      if (!res.success) { area.innerHTML = '<div class="msg error">' + escapeHtml(res.message || '불러오기 실패') + '</div>'; return; }
+      const isGroup = res.mode === '모둠';
+      let html = `<div class="gb-summary">작성 <b>${res.writtenCount}</b> / ${res.list.length}명</div>`;
+      html += `<table class="tt"><tr><th class="tt-num">번호</th><th class="tt-name">이름</th>${isGroup ? '<th style="width:80px">모둠</th>' : ''}<th>돌아보기</th><th style="width:130px">저장 시각</th></tr>`;
+      res.list.forEach(r => {
+        html += `<tr>
+          <td class="tt-num">${r.number}</td>
+          <td class="tt-name">${escapeHtml(r.name)}</td>
+          ${isGroup ? `<td style="text-align:center">${escapeHtml(r.groupName || '-')}</td>` : ''}
+          <td class="refl-cell">${r.text ? escapeHtml(r.text) : '<span style="color:var(--ink-faint)">아직 안 씀</span>'}</td>
+          <td style="text-align:center;font-size:12px;color:var(--ink-faint)">${escapeHtml(r.updatedAt || '-')}</td>
+        </tr>`;
+      });
+      area.innerHTML = html + '</table>';
+    })
+    .withFailureHandler(err => { area.innerHTML = '<div class="msg error">불러오기 실패: ' + escapeHtml(err.message) + '</div>'; })
+    .teacherListReflections(teacherPw, pid);
+}
+
+// 이 프로젝트에서의 산출물 + 받은/남긴 평가를 지운다 (비밀번호는 그대로)
+function resetTeacherDetailRecord() {
+  const d = teacherDetail;
+  if (!d) return;
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  const pLabel = p ? '[' + p.seq + '번째 · ' + p.title + ']' : '[선택한 프로젝트]';
+  const who = d.type === 'group' ? d.groupName + '의' : d.name + ' 학생의';
+  const what = d.type === 'group' ? '산출물, 받은 평가, 구성원들이 남긴 평가' : '산출물, 받은 평가, 남긴 평가';
+  if (!confirm(who + ' ' + pLabel + ' ' + what + '를 모두 지웁니다.\n(다른 프로젝트 기록과 비밀번호는 그대로예요)\n되돌릴 수 없어요. 정말 진행할까요?')) return;
+
+  const onOk = res => {
+    if (res.success) { alert('초기화되었습니다.'); loadTeacherDetail_(); loadTeacherProjectPanel(); }
+    else alert(res.message);
+  };
+  const run = google.script.run.withSuccessHandler(onOk).withFailureHandler(err => alert('오류: ' + err.message));
+  if (d.type === 'group') run.teacherResetGroupData(teacherPw, d.groupId, teacherSelectedProjectId);
+  else run.teacherResetAllStudentData(teacherPw, d.name, teacherSelectedProjectId);
+}
+
+/* ===================== 교사: 산출물 대신 등록·수정 ===================== */
+function openTeacherSubEdit() {
+  const d = teacherDetail;
+  if (!d) return;
+  const sub = (d.result && d.result.hasSubmission) ? d.result.submission : null;
+  const p = teacherProjectsCache.find(x => x.id === teacherSelectedProjectId);
+  document.getElementById('tSubEditHeading').textContent =
+    (sub ? '✏️ 산출물 수정 — ' : '📝 산출물 대신 등록 — ') + teacherDetailLabel_();
+  setProjTag_('tSubEditTag', p);
+  document.getElementById('tSubTitle').value = sub ? (sub.title || '') : '';
+  document.getElementById('tSubDesc').value = sub ? (sub.desc || '') : '';
+  setUrlFieldForEdit_('tSubUrl', sub ? (sub.url || '') : '');
+  document.getElementById('tSubEditMsg').innerHTML = '';
+  resetPhotoBox_('tsub', sub ? (sub.imageUrl || null) : null);
+  go('teacher-sub-edit');
+}
+
+function doTeacherSaveSubmission() {
+  const d = teacherDetail;
+  if (!d) return;
+  const title = document.getElementById('tSubTitle').value.trim();
+  const url = document.getElementById('tSubUrl').value.trim();
+  const desc = document.getElementById('tSubDesc').value.trim();
+  if (!title) { setMsg('tSubEditMsg', '제목은 꼭 입력해주세요.', 'error'); return; }
+  if (!url && !document.getElementById('tSubUrl').dataset.hasHidden) { setMsg('tSubEditMsg', 'URL을 입력해주세요.', 'error'); return; }
+  const target = d.type === 'group' ? { groupId: d.groupId } : { name: d.name };
+  setMsg('tSubEditMsg', teacherPhotoData ? '사진 업로드 중... 잠시만 기다려주세요' : '저장 중...', '');
+  google.script.run
+    .withSuccessHandler(res => {
+      if (res.success) {
+        go('teacher-student');
+        loadTeacherDetail_();
+        loadTeacherStudentTable(true);
+      } else {
+        setMsg('tSubEditMsg', res.message, 'error');
+      }
+    })
+    .withFailureHandler(serverError_('tSubEditMsg'))
+    .teacherSaveSubmission(teacherPw, teacherSelectedProjectId, target, title, url, desc, teacherPhotoData);
+}
+
+function renderSubmissionInfoHtml(sub) {
+  if (!sub) return '';
+  return `<div class="box">
+    <div style="font-size:18px;font-weight:bold">${escapeHtml(sub.title)}</div>
+    <div style="color:var(--ink-soft);margin:6px 0">${escapeHtml(sub.desc || '')}</div>
+    ${renderMediaRowHtml(sub.imageUrl, sub.url)}
+    <div style="font-size:12px;color:var(--ink-faint);margin-top:8px">등록: ${escapeHtml(sub.createdAt)}${sub.updatedAt && sub.updatedAt !== sub.createdAt ? ' · 수정: ' + escapeHtml(sub.updatedAt) : ''}</div>
+  </div>`;
+}
+</script>
+</body>
+</html>

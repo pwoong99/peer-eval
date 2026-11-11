@@ -1,0 +1,124 @@
+rules_version = '2';
+
+// ============================================================
+//  산출물 동료평가 — Firestore 보안 규칙
+//  ※ 아래 teacherEmail() 의 이메일을 js/firebase-config.js 의 TEACHER_EMAIL 과
+//    똑같이 맞춘 뒤, Firebase 콘솔 > Firestore Database > 규칙 에 붙여 넣고 [게시]
+// ============================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function teacherEmail() { return 'pwoong99@naver.com'; }
+
+    function signedIn()  { return request.auth != null; }
+    function isTeacher() { return signedIn() && request.auth.token.email == teacherEmail(); }
+
+    // 학생 로그인 = 익명 로그인 + 번호·비밀번호가 맞는 세션 문서
+    function sessionPath() { return /databases/$(database)/documents/sessions/$(request.auth.uid); }
+    function hasSession()  { return signedIn() && exists(sessionPath()); }
+    function mySid()       { return get(sessionPath()).data.sid; }
+
+    function proj(pid)     { return get(/databases/$(database)/documents/projects/$(pid)).data; }
+    function projOpen(pid) { return proj(pid).status == '진행중'; }
+    // 모둠 프로젝트에서 내가 속한 모둠ID (없으면 '')
+    function myGroup(pid)  { return proj(pid).get('groupOf', {}).get(mySid(), ''); }
+
+    // 산출물 주인인지: 개인이면 내 번호, 모둠이면 내 모둠
+    function ownsSub(d) {
+      return (d.ownerType == 'individual' && d.ownerKey == mySid())
+          || (d.ownerType == 'group' && d.ownerKey != '' && d.ownerKey == myGroup(d.projectId));
+    }
+    function okSub(d) {
+      return d.title is string && d.title.size() > 0 && d.title.size() <= 100
+          && d.url is string && d.url.size() <= 2000
+          && d.desc is string && d.desc.size() <= 3000;
+    }
+
+    // 학생 명단 (번호·이름) — 로그인 화면에서 보여야 하므로 로그인(익명 포함)만 하면 읽기 가능
+    match /students/{sid} {
+      allow read: if signedIn();
+      allow write: if isTeacher();
+    }
+
+    // 비밀번호 — 학생은 읽을 수 없음. 본인 비밀번호 변경만 가능
+    match /pins/{sid} {
+      allow read, write: if isTeacher();
+      allow update: if hasSession() && mySid() == sid
+        && request.resource.data.keys().hasOnly(['pin', 'updatedAt'])
+        && request.resource.data.pin is string
+        && request.resource.data.pin.matches('^[0-9]{4}$');
+    }
+
+    // 로그인 세션 — 입력한 비밀번호가 pins 문서와 같을 때만 만들어짐
+    match /sessions/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isTeacher();
+      allow create, update: if signedIn() && request.auth.uid == uid
+        && request.resource.data.keys().hasOnly(['sid', 'pin', 'at'])
+        && request.resource.data.sid is string
+        && exists(/databases/$(database)/documents/pins/$(request.resource.data.sid))
+        && get(/databases/$(database)/documents/pins/$(request.resource.data.sid)).data.pin
+           == request.resource.data.pin;
+      allow delete: if (signedIn() && request.auth.uid == uid) || isTeacher();
+    }
+
+    // 프로젝트(문항·모둠 포함) — 교사만 만들고 고침
+    match /projects/{pid} {
+      allow read: if signedIn();
+      allow write: if isTeacher();
+    }
+
+    // 새 프로젝트 임시저장 — 교사 전용
+    match /drafts/{id} {
+      allow read, write: if isTeacher();
+    }
+
+    // 산출물 — 문서 ID는 "프로젝트ID_주인키" (주인키 = 학생번호 또는 모둠ID)
+    match /submissions/{subId} {
+      allow read: if hasSession() || isTeacher();
+      allow create: if isTeacher() || (hasSession()
+        && subId == request.resource.data.projectId + '_' + request.resource.data.ownerKey
+        && ownsSub(request.resource.data)
+        && projOpen(request.resource.data.projectId)
+        && okSub(request.resource.data));
+      allow update: if isTeacher() || (hasSession()
+        && ownsSub(resource.data)
+        && projOpen(resource.data.projectId)
+        && request.resource.data.projectId == resource.data.projectId
+        && request.resource.data.ownerType == resource.data.ownerType
+        && request.resource.data.ownerKey == resource.data.ownerKey
+        && okSub(request.resource.data));
+      allow delete: if isTeacher() || (hasSession()
+        && ownsSub(resource.data)
+        && projOpen(resource.data.projectId));
+    }
+
+    // 동료 평가 — 문서 ID는 "산출물ID_평가자번호" (한 사람이 한 산출물에 하나)
+    match /evaluations/{eid} {
+      allow read: if hasSession() || isTeacher();
+      allow create, update: if isTeacher() || (hasSession()
+        && eid == request.resource.data.submissionId + '_' + mySid()
+        && request.resource.data.evaluatorSid == mySid()
+        && projOpen(request.resource.data.projectId)
+        && !ownsSub(get(/databases/$(database)/documents/submissions/$(request.resource.data.submissionId)).data)
+        && request.resource.data.comment is string
+        && request.resource.data.comment.size() > 0
+        && request.resource.data.comment.size() <= 1000);
+      // 내가 남긴 평가, 또는 내 산출물을 지울 때 그 산출물에 달린 평가
+      allow delete: if isTeacher() || (hasSession()
+        && (resource.data.evaluatorSid == mySid()
+            || ownsSub(get(/databases/$(database)/documents/submissions/$(resource.data.submissionId)).data)));
+    }
+
+    // 피드백 돌아보기 — 문서 ID는 "프로젝트ID_학생번호"
+    match /reflections/{rid} {
+      allow read: if hasSession() || isTeacher();
+      allow create, update: if isTeacher() || (hasSession()
+        && rid == request.resource.data.projectId + '_' + mySid()
+        && request.resource.data.sid == mySid()
+        && request.resource.data.text is string
+        && request.resource.data.text.size() <= 1000);
+      allow delete: if isTeacher();
+    }
+  }
+}
